@@ -1,25 +1,24 @@
 package com.project.team4backend.domain.meal.entity;
 
-import com.project.team4backend.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDate;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Meal {
+public class NutritionInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mealId;
+    private Long nutritionId;
 
-    private LocalDate date;
-    private String description;
+    private Double calories;
+    private Double carbs;
+    private Double protein;
+    private Double fat;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Member user;
+    @JoinColumn(name = "meal_id")
+    private Meal meal;
 }

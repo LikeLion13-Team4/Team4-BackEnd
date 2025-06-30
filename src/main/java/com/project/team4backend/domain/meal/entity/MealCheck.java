@@ -11,15 +11,16 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Meal {
+public class MealCheck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mealId;
+    private Long checkId;
 
     private LocalDate date;
-    private String description;
+    private Boolean isChecked;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Member user;
 }
+
