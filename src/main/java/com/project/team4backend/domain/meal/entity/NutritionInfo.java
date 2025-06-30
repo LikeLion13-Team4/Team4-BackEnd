@@ -18,7 +18,7 @@ public class NutritionInfo {
     private Double protein;
     private Double fat;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meal_id")
     private Meal meal;
 }

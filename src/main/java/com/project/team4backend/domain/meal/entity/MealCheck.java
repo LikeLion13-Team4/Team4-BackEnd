@@ -19,7 +19,7 @@ public class MealCheck {
     private LocalDate date;
     private Boolean isChecked;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Member user;
 }

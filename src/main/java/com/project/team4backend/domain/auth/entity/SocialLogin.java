@@ -22,7 +22,7 @@ public class SocialLogin {
     private String socialId;
     private LocalDateTime createAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Member user;
 }

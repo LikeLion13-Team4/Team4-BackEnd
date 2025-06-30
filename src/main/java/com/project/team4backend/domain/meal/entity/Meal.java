@@ -16,10 +16,12 @@ public class Meal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mealId;
 
-    private LocalDate date;
+    @Column(unique = true)
+    private LocalDate date; //일자별로
+
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Member user;
 }
