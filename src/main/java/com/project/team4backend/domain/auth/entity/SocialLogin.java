@@ -4,21 +4,25 @@ import com.project.team4backend.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Auth {
+public class SocialLogin {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long authId;
+    private Long socialAuthId;
 
-    private String password;
-    private Boolean isTemp; //임시 비밀번호 여부
+    private String socialType;
+    private String socialId;
+    private LocalDateTime createAt;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private Member user;
 }

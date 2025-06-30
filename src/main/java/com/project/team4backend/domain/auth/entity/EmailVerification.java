@@ -1,10 +1,8 @@
-package com.project.team4backend.domain.member.entity;
+package com.project.team4backend.domain.auth.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,21 +10,19 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Member {
+public class EmailVerification {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long emailVerificationId;
 
-    private String nickname;
     private String email;
-    private LocalDate birthday;
-    private Float height;
-    private Float weight;
+    private String code;
 
     @Enumerated(EnumType.STRING)
-    private Gender gender;
+    private  Type type;
 
-    private String profileImageUrl;
     private LocalDateTime createAt;
-    private LocalDateTime updateAt;
+    private LocalDateTime expireAt;
+    private Boolean isVerified;
 }
