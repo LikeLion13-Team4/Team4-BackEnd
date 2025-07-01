@@ -1,5 +1,6 @@
 package com.project.team4backend.domain.auth.entity;
 
+import com.project.team4backend.domain.auth.entity.enums.IsTempPassword;
 import com.project.team4backend.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +14,6 @@ public class Auth {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
 
     @Column(name = "password")
@@ -23,7 +23,7 @@ public class Auth {
     private IsTempPassword isTempPassword;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
 }

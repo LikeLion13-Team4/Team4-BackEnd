@@ -16,11 +16,14 @@ public class MealCheck {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long checkId;
 
+    @Column(name = "date")
     private LocalDate date;
+
+    @Column(name = "is_checked")
     private Boolean isChecked;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Member user;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 }
 
