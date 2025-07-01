@@ -17,7 +17,7 @@ import java.security.SignatureException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auths")
 @Tag(name = "토큰 발급 API", description = "토큰 발급 API입니다.")
 public class AuthController {
 
