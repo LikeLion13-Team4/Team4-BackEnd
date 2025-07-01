@@ -1,7 +1,7 @@
 package com.project.team4backend.global.security;
 
 import com.project.team4backend.domain.auth.dto.response.AuthResDTO;
-import com.project.team4backend.domain.auth.entity.IsTempPassword;
+import com.project.team4backend.domain.auth.entity.enums.IsTempPassword;
 import com.project.team4backend.domain.auth.service.RefreshTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

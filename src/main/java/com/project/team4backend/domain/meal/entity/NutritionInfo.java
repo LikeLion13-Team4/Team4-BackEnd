@@ -13,12 +13,19 @@ public class NutritionInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long nutritionId;
 
+    @Column(name = "calories")
     private Double calories;
+
+    @Column(name = "carbs")
     private Double carbs;
+
+    @Column(name = "protein")
     private Double protein;
+
+    @Column(name = "fat")
     private Double fat;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meal_id")
+    @JoinColumn(name = "meal_id", nullable = false)
     private Meal meal;
 }

@@ -12,16 +12,18 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Meal {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mealId;
 
-    @Column(unique = true)
+    @Column(name = "date", unique = true)
     private LocalDate date; //일자별로
 
+    @Column(name = "description")
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Member user;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 }

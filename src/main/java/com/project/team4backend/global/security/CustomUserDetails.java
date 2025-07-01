@@ -1,6 +1,6 @@
 package com.project.team4backend.global.security;
 
-import com.project.team4backend.domain.auth.entity.IsTempPassword;
+import com.project.team4backend.domain.auth.entity.enums.IsTempPassword;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
