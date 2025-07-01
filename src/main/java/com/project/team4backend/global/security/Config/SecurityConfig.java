@@ -40,11 +40,11 @@ public class SecurityConfig {
 
     //인증이 필요하지 않은 url
     private final String[] allowUrl = {
-            "/auths/login", //로그인 은 인증이 필요하지 않음
-            "/auths/signup", // 회원가입은 인증이 필요하지 않음
-            "/auths/login/kakao",
-            "/auths/send-temp-password",
-            "/auth/reissue", // 토큰 재발급은 인증이 필요하지 않음
+            "/api/v1/auths/login", //로그인 은 인증이 필요하지 않음
+            "/api/v1/auths/signup", // 회원가입은 인증이 필요하지 않음
+            "/api/v1/auths/login/kakao",
+            "/api/v1/auths/reset-temp-password",
+            "/api/v1/auth/reissue", // 토큰 재발급은 인증이 필요하지 않음
             "/auth/**",
             "api/usage",
             "/swagger-ui/**",   // swagger 관련 URL
@@ -54,7 +54,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         CustomLoginFilter loginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil);
-        loginFilter.setFilterProcessesUrl("/members/login");
+        loginFilter.setFilterProcessesUrl("/api/v1/auths/login");
 
         http
                 .authorizeHttpRequests(request -> request
