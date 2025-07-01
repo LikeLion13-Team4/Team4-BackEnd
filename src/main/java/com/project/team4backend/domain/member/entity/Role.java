@@ -1,5 +1,5 @@
 package com.project.team4backend.domain.member.entity;
 
-public enum Gender {
-    MALE, FEMALE
+public enum Role {
+    ROLE_ADMIN, ROLE_USER
 }

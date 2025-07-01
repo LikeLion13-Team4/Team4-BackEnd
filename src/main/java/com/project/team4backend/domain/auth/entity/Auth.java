@@ -13,12 +13,17 @@ public class Auth {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long authId;
 
+    private Long id;
+
+    @Column(name = "password")
     private String password;
-    private Boolean isTemp; //임시 비밀번호 여부
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private Member user;
+    @Column(name = "is_temp")
+    private IsTempPassword isTempPassword;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
 }
