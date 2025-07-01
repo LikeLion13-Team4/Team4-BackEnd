@@ -1,6 +1,6 @@
 package com.project.team4backend.global.security;
 
-//import com.project.team4backend.domain.member.entity.IsTempPassword;
+import com.project.team4backend.domain.auth.entity.IsTempPassword;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,14 +17,14 @@ public class CustomUserDetails implements UserDetails {
 
     private final String email;
     private final String password;
-    private final String roles;
-    //private final IsTempPassword isTempPassword;
+    private final String role;
+    private final IsTempPassword isTempPassword;
 
     // 해당 User 의 권한을 return
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(String.valueOf(roles)));
+        authorities.add(new SimpleGrantedAuthority(role));
         return authorities;
     }
     
