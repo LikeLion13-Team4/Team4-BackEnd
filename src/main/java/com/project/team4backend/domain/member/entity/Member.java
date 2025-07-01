@@ -1,6 +1,8 @@
 package com.project.team4backend.domain.member.entity;
 
 
+import com.project.team4backend.domain.member.entity.enums.Gender;
+import com.project.team4backend.domain.member.entity.enums.Role;
 import com.project.team4backend.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +15,6 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-
 public class Member extends BaseEntity {
 
     @Id

@@ -1,6 +1,7 @@
 package com.project.team4backend.domain.report.entity;
 
 import com.project.team4backend.domain.member.entity.Member;
+import com.project.team4backend.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,19 +12,33 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Report {
+@Table(name = "report")
+public class Report extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "report_id")
     private Long reportId;
 
+    @Column(name = "total_calories")
     private Double totalCalories;
+
+    @Column(name = "total_carbs")
     private Double totalCarbs;
+
+    @Column(name = "total_protein")
     private Double totalProtein;
+
+    @Column(name = "total_fat")
     private Double totalFat;
+
+    @Column(name = "start_date")
     private LocalDate startDate;
+
+    @Column(name = "end_date")
     private LocalDate endDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Member user;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 }

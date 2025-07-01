@@ -1,6 +1,7 @@
 package com.project.team4backend.domain.auth.entity;
 
 import com.project.team4backend.domain.member.entity.Member;
+import com.project.team4backend.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,17 +13,21 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class SocialLogin {
+@Table(name = "social_login")
+public class SocialLogin extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "social_auth_id")
     private Long socialAuthId;
 
+    @Column(name = "social_type")
     private String socialType;
+
+    @Column(name = "social_id")
     private String socialId;
-    private LocalDateTime createAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Member user;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 }

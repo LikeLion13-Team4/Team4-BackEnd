@@ -1,6 +1,6 @@
 package com.project.team4backend.global.security.filter;
 
-import com.project.team4backend.domain.auth.entity.IsTempPassword;
+import com.project.team4backend.domain.auth.entity.enums.IsTempPassword;
 import com.project.team4backend.global.security.CustomUserDetails;
 import com.project.team4backend.global.security.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
