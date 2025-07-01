@@ -1,4 +1,4 @@
-package com.project.team4backend.domain.post.entity;
+package com.project.team4backend.domain.comment.entity;
 
 import com.project.team4backend.domain.member.entity.Member;
 import jakarta.persistence.*;
@@ -6,28 +6,25 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Post {
+public class CommentLike {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    private Long commentLikeId;
 
-    @Column(length = 100)
-    private String title;
-
-    @Column(nullable = false)
-    private String content;
-
-    private String imageUrl;
-    private Integer likeCount;
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
+    private LocalDateTime createAt; //좋아요 누른시간
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Member user;
+
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 }

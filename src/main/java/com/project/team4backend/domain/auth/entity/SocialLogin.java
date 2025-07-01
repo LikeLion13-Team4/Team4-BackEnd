@@ -1,8 +1,9 @@
-package com.project.team4backend.domain.post.entity;
+package com.project.team4backend.domain.auth.entity;
 
 import com.project.team4backend.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
+
 
 import java.time.LocalDateTime;
 
@@ -11,23 +12,17 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Post {
+public class SocialLogin {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    private Long socialAuthId;
 
-    @Column(length = 100)
-    private String title;
-
-    @Column(nullable = false)
-    private String content;
-
-    private String imageUrl;
-    private Integer likeCount;
+    private String socialType;
+    private String socialId;
     private LocalDateTime createAt;
-    private LocalDateTime updateAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Member user;
 }
