@@ -74,7 +74,7 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
 
             helper.setTo(to);               // 수신자 설정
             helper.setSubject(subject);     // 메일 제목 설정
-            helper.setFrom("tjgustjr16@naver.com");  // 발신자 설정 (SMTP 계정과 동일해야 함)
+            helper.setFrom("jo215098@gmail.com");  // 발신자 설정 (SMTP 계정과 동일해야 함)
             helper.setText(htmlBody, true); // 본문 설정 (true → HTML 형식)
 
             javaMailSender.send(message);       // 메일 전송
