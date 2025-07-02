@@ -17,6 +17,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
 
+    @Override
     public AuthResDTO.JwtResDTO reissueToken(AuthResDTO.JwtResDTO jwtDto) {
 
         log.info("[ Auth Service ] 토큰 재발급을 시작합니다.");

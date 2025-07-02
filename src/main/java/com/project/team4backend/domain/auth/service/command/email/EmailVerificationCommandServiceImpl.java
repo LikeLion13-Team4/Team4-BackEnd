@@ -32,6 +32,7 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
     private final EmailVerificationRepository emailVerificationRepository;
 
     //이메일인증 정보 생성
+    @Override
     public String createEmailVerification(EmailVerificationReqDTO.EmailSendReqDTO emailSendReqDTO) {
         String code = generateCode();
         EmailVerification emailVerification = EmailVerificationConverter.toEmailVerification(emailSendReqDTO, code);
@@ -39,6 +40,7 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
         return code;
     }
     //이메일 인증 코드 검증
+    @Override
     public void checkVerificationCode(EmailVerificationReqDTO.EmailVerifyReqDTO emailVerifyReqDTO) {
         EmailVerification emailVerification = emailVerificationRepository
                 .findTopByEmailOrderByCreatedAtDesc(emailVerifyReqDTO.email())
@@ -64,6 +66,7 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
     }
 
     //이메일 전송 전용 메서드
+    @Override
     public void sendHtmlEmail(String to, String subject, String htmlBody) {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();  // MIME 형식의 이메일 객체 생성
@@ -81,12 +84,14 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
     }
 
     // 임시 비번 이메일로 전송
+    @Override
     public void sendTempPassword(String email) {
         String html = emailTemplateBuilder.buildTempPasswordHtml(generateTempPassword());
         sendHtmlEmail(email, "인증번호 안내", html);
     }
 
     // 인증 코드 이메일로 전송
+    @Override
     public void sendVerificationCode(String email, String code) {
         String html = emailTemplateBuilder.buildVerifyEmailHtml(code);
         sendHtmlEmail(email, "인증 코드 전송", html);
