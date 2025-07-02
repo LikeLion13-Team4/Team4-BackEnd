@@ -47,6 +47,10 @@ public class SecurityConfig {
             "/api/v1/auth/reissue", // 토큰 재발급은 인증이 필요하지 않음
             "/auth/**",
             "api/usage",
+            "/api/v1/auths/emailVerifications/send",
+            "/api/v1/auths/emailVerifications/check",
+            //"/auth/**",
+            "/api/usage",
             "/swagger-ui/**",   // swagger 관련 URL
             "/v3/api-docs/**"
     };
