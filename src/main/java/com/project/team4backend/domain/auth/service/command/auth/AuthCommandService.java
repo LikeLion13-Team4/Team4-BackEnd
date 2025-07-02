@@ -1,4 +1,4 @@
-package com.project.team4backend.domain.auth.service.command;
+package com.project.team4backend.domain.auth.service.command.auth;
 
 import com.project.team4backend.domain.auth.dto.response.AuthResDTO;
 

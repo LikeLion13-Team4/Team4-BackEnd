@@ -1,4 +1,4 @@
-package com.project.team4backend.domain.auth.exception;
+package com.project.team4backend.domain.auth.exception.auth;
 
 import com.project.team4backend.global.apiPayload.exception.CustomException;
 import lombok.Getter;

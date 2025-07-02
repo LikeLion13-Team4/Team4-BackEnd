@@ -1,8 +1,8 @@
-package com.project.team4backend.domain.auth.service.command;
+package com.project.team4backend.domain.auth.service.command.auth;
 
 import com.project.team4backend.domain.auth.dto.response.AuthResDTO;
-import com.project.team4backend.domain.auth.exception.AuthErrorCode;
-import com.project.team4backend.domain.auth.exception.AuthException;
+import com.project.team4backend.domain.auth.exception.auth.AuthErrorCode;
+import com.project.team4backend.domain.auth.exception.auth.AuthException;
 import com.project.team4backend.global.security.JwtUtil;
 import com.project.team4backend.domain.auth.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
