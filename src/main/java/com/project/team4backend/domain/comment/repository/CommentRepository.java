@@ -1,4 +1,4 @@
-package com.project.team4backend.domain.comment.entity.repository;
+package com.project.team4backend.domain.comment.repository;
 
 import com.project.team4backend.domain.comment.entity.Comment;
 import org.springframework.data.jpa.repository.EntityGraph;
