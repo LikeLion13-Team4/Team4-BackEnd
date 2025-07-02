@@ -7,8 +7,8 @@ import com.project.team4backend.global.apiPayload.CustomResponse;
 import com.project.team4backend.global.security.CustomUserDetails;
 import com.project.team4backend.global.security.JwtUtil;
 import com.project.team4backend.domain.auth.dto.response.AuthResDTO.JwtResDTO;
-import com.project.team4backend.domain.auth.exception.AuthErrorCode;
-import com.project.team4backend.domain.auth.exception.AuthException;
+import com.project.team4backend.domain.auth.exception.auth.AuthErrorCode;
+import com.project.team4backend.domain.auth.exception.auth.AuthException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -86,7 +86,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // CustomResponse 사용하여 응답 통일
         AuthResDTO.LoginResDTO jwtLoginResDTO = AuthResDTO.LoginResDTO.builder()
-                .nickname(customUserDetails.getUsername())
+                .email(customUserDetails.getEmail())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

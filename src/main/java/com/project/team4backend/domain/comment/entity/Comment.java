@@ -30,11 +30,11 @@ public class Comment{
     @Builder.Default
     private Long hierarchy = 0L; // 댓글이면 0 대댓글이면 1이 들어감
 
-    @Column(name = "orders")
+    @Column(name = "comment_orders")
     @Builder.Default
     private Long orders = 0L; // 대댓글 순서로 데이터 정렬할 때 필요
 
-    @Column(name = "groups")
+    @Column(name = "comment_groups")
     private Long groups; // 한개의 댓글과 그에 딸린 대댓글들을 한 그룹으로 묶는다.
 
     @Column(name = "likes")

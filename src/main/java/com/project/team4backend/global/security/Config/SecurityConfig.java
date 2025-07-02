@@ -44,9 +44,11 @@ public class SecurityConfig {
             "/api/v1/auths/signup", // 회원가입은 인증이 필요하지 않음
             "/api/v1/auths/login/kakao",
             "/api/v1/auths/reset-temp-password",
-            "/api/v1/auth/reissue", // 토큰 재발급은 인증이 필요하지 않음
-            "/auth/**",
-            "api/usage",
+            "/api/v1/auths/reissue", // 토큰 재발급은 인증이 필요하지 않음
+            "/api/v1/auths/emailVerifications/send",
+            "/api/v1/auths/emailVerifications/check",
+            //"/auth/**",
+            "/api/usage",
             "/swagger-ui/**",   // swagger 관련 URL
             "/v3/api-docs/**"
     };
@@ -71,7 +73,7 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(jwtAccessDeniedHandler)
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint))
-                .logout(logout -> logout.logoutUrl("/members/logout")
+                .logout(logout -> logout.logoutUrl("/api/v1/auths/logout")
                         .addLogoutHandler(customLogoutHandler)
                         .logoutSuccessHandler(customLogoutSuccessHandler)
                 );

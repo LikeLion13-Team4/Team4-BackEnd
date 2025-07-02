@@ -51,6 +51,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    //SMTP
+    implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.2'
+    // timeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 tasks.named('test') {
