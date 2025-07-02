@@ -26,26 +26,37 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
     @Override
     public CommentResDTO.CommentCreateResDTO createComment(Long postId, Long parentId, CommentReqDTO.CommentCreateReqDTO dto, String memberEmail) {
+        // 멤버 조회
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new CommentException(CommentErrorCode.MEMBER_NOT_FOUND));
 
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new CommentException(CommentErrorCode.POST_NOT_FOUND));
+        // Post 객체 가져오기
+        Post post;
+        if (postId != null) {
+            post = postRepository.findById(postId)
+                    .orElseThrow(() -> new CommentException(CommentErrorCode.POST_NOT_FOUND));
+        } else if (parentId != null) {
+            Comment parentComment = commentRepository.findById(parentId)
+                    .orElseThrow(() -> new CommentException(CommentErrorCode.PARENT_COMMENT_NOT_FOUND));
+            post = parentComment.getPost();
+        } else {
+            throw new CommentException(CommentErrorCode.POST_NOT_FOUND);  // 또는 적절한 예외
+        }
 
         Long hierarchy;
         Long groups;
         Long orders;
 
-        if (parentId == null) {
+        if (parentId == null) {  // 댓글 작성
             hierarchy = 0L;
             groups = commentRepository.count() + 1;
             orders = 0L;
-        } else {
+        } else {  // 대댓글 작성
             Comment parentComment = commentRepository.findById(parentId)
                     .orElseThrow(() -> new CommentException(CommentErrorCode.PARENT_COMMENT_NOT_FOUND));
             hierarchy = 1L;
             groups = parentComment.getGroups();
-            Long maxOrders = commentRepository.findMaxCommentOrder(postId, groups);
+            Long maxOrders = commentRepository.findMaxCommentOrder(post.getPostId(), groups);
             orders = (maxOrders == null) ? 0L : maxOrders + 1;
         }
 
