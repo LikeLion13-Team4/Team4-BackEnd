@@ -1,5 +1,6 @@
 package com.project.team4backend.domain.auth.entity;
 
+import com.project.team4backend.domain.auth.entity.enums.Type;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,9 @@ public class EmailVerification {
 
     @Column(name = "code")
     private String code;
+
+    @Column(name = "type")
+    private Type type;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
