@@ -49,6 +49,11 @@ public class AuthController {
     public void login(@RequestBody AuthReqDTO.LoginReqDTO loginReqDTO) {
     }
 
+    @Operation(method = "POST", summary = "로그아웃", description = "security handler에서 처리")
+    @PostMapping("/logout")
+    public void logout() {
+    }
+
     //토큰 재발급 API
     @Operation(method = "POST", summary = "토큰 재발급", description = "토큰 재발급. accessToken과 refreshToken을 body에 담아서 전송합니다.")
     @PostMapping("/reissue")

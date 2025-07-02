@@ -73,7 +73,7 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(jwtAccessDeniedHandler)
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint))
-                .logout(logout -> logout.logoutUrl("/members/logout")
+                .logout(logout -> logout.logoutUrl("/api/v1/auths/logout")
                         .addLogoutHandler(customLogoutHandler)
                         .logoutSuccessHandler(customLogoutSuccessHandler)
                 );
