@@ -20,7 +20,7 @@ public class AuthResDTO {
 
     @Builder
     public record LoginResDTO(
-            String nickname,
+            String email,
             String accessToken,
             String refreshToken
     ){}

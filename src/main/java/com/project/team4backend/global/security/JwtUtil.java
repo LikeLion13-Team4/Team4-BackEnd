@@ -103,7 +103,7 @@ public class JwtUtil {
         String refreshToken = tokenProvider(customUserDetails, expiration);
 
         // Redis에 Refresh Token 저장
-        refreshTokenService.saveRefreshToken(customUserDetails.getUsername(), refreshToken);
+        refreshTokenService.saveRefreshToken(customUserDetails.getEmail(), refreshToken);
         return refreshToken;
     }
 

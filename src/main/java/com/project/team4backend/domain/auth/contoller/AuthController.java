@@ -43,6 +43,12 @@ public class AuthController {
         );
         return CustomResponse.onSuccess(authCommandService.signUp(signupReqDTO));
     }
+
+    @Operation(method = "POST", summary = "로그인", description = "jwt 발급은 필터에서 처리된다.")
+    @PostMapping("/login")
+    public void login(@RequestBody AuthReqDTO.LoginReqDTO loginReqDTO) {
+    }
+
     //토큰 재발급 API
     @Operation(method = "POST", summary = "토큰 재발급", description = "토큰 재발급. accessToken과 refreshToken을 body에 담아서 전송합니다.")
     @PostMapping("/reissue")

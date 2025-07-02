@@ -86,7 +86,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // CustomResponse 사용하여 응답 통일
         AuthResDTO.LoginResDTO jwtLoginResDTO = AuthResDTO.LoginResDTO.builder()
-                .nickname(customUserDetails.getUsername())
+                .email(customUserDetails.getEmail())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
