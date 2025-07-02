@@ -44,9 +44,7 @@ public class SecurityConfig {
             "/api/v1/auths/signup", // 회원가입은 인증이 필요하지 않음
             "/api/v1/auths/login/kakao",
             "/api/v1/auths/reset-temp-password",
-            "/api/v1/auth/reissue", // 토큰 재발급은 인증이 필요하지 않음
-            "/auth/**",
-            "api/usage",
+            "/api/v1/auths/reissue", // 토큰 재발급은 인증이 필요하지 않음
             "/api/v1/auths/emailVerifications/send",
             "/api/v1/auths/emailVerifications/check",
             //"/auth/**",
