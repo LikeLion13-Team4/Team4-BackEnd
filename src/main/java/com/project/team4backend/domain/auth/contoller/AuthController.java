@@ -1,7 +1,11 @@
 package com.project.team4backend.domain.auth.contoller;
 
+import com.project.team4backend.domain.auth.dto.request.AuthReqDTO;
+import com.project.team4backend.domain.auth.dto.request.EmailVerificationReqDTO;
 import com.project.team4backend.domain.auth.dto.response.AuthResDTO;
-import com.project.team4backend.domain.auth.service.command.AuthCommandService;
+import com.project.team4backend.domain.auth.service.command.auth.AuthCommandService;
+import com.project.team4backend.domain.auth.service.command.email.EmailVerificationCommandService;
+import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.global.apiPayload.CustomResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,10 +22,37 @@ import java.security.SignatureException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auths")
-@Tag(name = "토큰 발급 API", description = "토큰 발급 API입니다.")
+@Tag(name = "Auth 관련 api", description = "Auth 관련 API입니다.")
 public class AuthController {
 
     private final AuthCommandService authCommandService;
+    private final EmailVerificationCommandService emailVerificationCommandService;
+
+    private final MemberRepository memberRepository;
+
+
+    @Operation(method = "POST", summary = "회원가입", description = "email과 password 입력하여 회원가입")
+    @PostMapping("/signup")
+    public CustomResponse<AuthResDTO.SignUpResDTO> signIn(@RequestBody AuthReqDTO.SignupReqDTO signupReqDTO) {
+        //이메일 인증 코드 검증
+        emailVerificationCommandService.checkVerificationCode(
+                new EmailVerificationReqDTO.EmailVerifyReqDTO(
+                        signupReqDTO.email(),
+                        signupReqDTO.authCode()
+                )
+        );
+        return CustomResponse.onSuccess(authCommandService.signUp(signupReqDTO));
+    }
+
+    @Operation(method = "POST", summary = "로그인", description = "jwt 발급은 필터에서 처리된다.")
+    @PostMapping("/login")
+    public void login(@RequestBody AuthReqDTO.LoginReqDTO loginReqDTO) {
+    }
+
+    @Operation(method = "POST", summary = "로그아웃", description = "security handler에서 처리")
+    @PostMapping("/logout")
+    public void logout() {
+    }
 
     //토큰 재발급 API
     @Operation(method = "POST", summary = "토큰 재발급", description = "토큰 재발급. accessToken과 refreshToken을 body에 담아서 전송합니다.")

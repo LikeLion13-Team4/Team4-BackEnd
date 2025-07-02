@@ -2,7 +2,7 @@ package com.project.team4backend.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.team4backend.global.apiPayload.CustomResponse;
-import com.project.team4backend.domain.auth.exception.AuthErrorCode;
+import com.project.team4backend.domain.auth.exception.auth.AuthErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

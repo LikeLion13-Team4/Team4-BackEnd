@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.team4backend.domain.auth.entity.enums.IsTempPassword;
 import com.project.team4backend.global.apiPayload.CustomResponse;
 import com.project.team4backend.global.security.CustomUserDetails;
-import com.project.team4backend.domain.auth.exception.AuthErrorCode;
+import com.project.team4backend.domain.auth.exception.auth.AuthErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

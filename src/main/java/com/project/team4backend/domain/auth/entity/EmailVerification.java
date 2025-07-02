@@ -24,7 +24,6 @@ public class EmailVerification {
     private String code;
 
     @Column(name = "type")
-    @Enumerated(EnumType.STRING)
     private Type type;
 
     @Column(name = "created_at")
@@ -35,4 +34,8 @@ public class EmailVerification {
 
     @Column(name = "is_verified")
     private Boolean isVerified;
+
+    public void markAsVerified() {
+        this.isVerified = true;
+    }
 }

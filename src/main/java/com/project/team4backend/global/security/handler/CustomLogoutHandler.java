@@ -29,6 +29,11 @@ public class CustomLogoutHandler implements LogoutHandler {
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
             String accessToken = jwtUtil.resolveAccessToken(request);
 
+            //블랙리스트 token인 경우
+            if (redisTemplate.hasKey("blacklist:" + accessToken)) {
+                throw new RuntimeException("로그아웃된 accessToken 입니다.");
+            }
+
             if (accessToken != null) {
                 jwtUtil.validateToken(accessToken);
                 String email = jwtUtil.getEmail(accessToken);
