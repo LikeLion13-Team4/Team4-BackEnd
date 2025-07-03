@@ -1,4 +1,4 @@
-package com.project.team4backend.domain.comment.dto.responese;
+package com.project.team4backend.domain.comment.dto.response;
 
 import lombok.Builder;
 
