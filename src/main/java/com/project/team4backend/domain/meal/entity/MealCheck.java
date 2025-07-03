@@ -11,16 +11,20 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Table(name = "meal_checks", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"date", "member_id"})
+})// 회원id와 날자로 복합키 설정
 public class MealCheck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long checkId;
 
-    @Column(name = "date", unique = true)
+    @Column(name = "date", nullable = false)
     private LocalDate date;
 
     @Column(name = "is_checked")
-    private Boolean isChecked;
+    @Builder.Default
+    private Boolean isChecked = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
