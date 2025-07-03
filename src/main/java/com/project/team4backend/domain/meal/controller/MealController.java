@@ -36,8 +36,8 @@ public class MealController {
             @AuthenticationPrincipal UserDetails userDetails) {
 
         String email = userDetails.getUsername(); //사용자의 이메일
-        // 멤버 엔티티 조회는 서비스 내에서 처리하도록 구현했다고 가정
         mealCommandService.createMeal(dto, email);
+
         return CustomResponse.onSuccess(null);
     }
 
@@ -68,7 +68,7 @@ public class MealController {
 
     // 특정 날짜 식단 목록 조회
     @GetMapping
-    @Operation(summary = "식단 조회", description = "특정 날짜에 등록된 회원 식단 목록을 조회합니다. 날짜는 쿼리 파라미터로 전달합니다.")
+    @Operation(summary = "식단 조회", description = "특정 날짜에 등록된 회원 식단 목록을 조회합니다.")
     public CustomResponse<List<MealResDTO.MealRes>> getMealsByDate(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -76,5 +76,17 @@ public class MealController {
         String email = userDetails.getUsername();
         List<MealResDTO.MealRes> meals = mealQueryService.getMealsByDate(date, email);
         return CustomResponse.onSuccess(meals);
+    }
+
+    //출석체크여부 확인
+    @GetMapping("/check")
+    @Operation(summary = "출석 여부 확인", description = "특정 날짜에 사용자가 식단 출석했는지 확인합니다.")
+    public CustomResponse<Boolean> checkAttendance(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String email = userDetails.getUsername();
+        boolean isChecked = mealQueryService.isAttendanceChecked(date, email);
+        return CustomResponse.onSuccess(isChecked);
     }
 }

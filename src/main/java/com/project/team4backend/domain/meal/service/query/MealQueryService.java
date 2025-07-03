@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MealQueryService {
     List<MealResDTO.MealRes> getMealsByDate(LocalDate date, String member);
+
+    boolean isAttendanceChecked(LocalDate date, String email);
 }
