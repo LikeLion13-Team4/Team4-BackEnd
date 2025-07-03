@@ -24,7 +24,7 @@ public class MealCheck {
 
     @Column(name = "is_checked")
     @Builder.Default
-    private Boolean isChecked = false;
+    private Boolean isChecked = true; //식단 등록하면 자동생성되기때문에 true로 기본값 설정함.
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
