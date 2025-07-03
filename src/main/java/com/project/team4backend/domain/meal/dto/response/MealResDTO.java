@@ -9,6 +9,7 @@ public class MealResDTO {
     public record MealRes(
             Long mealId,
             LocalDate date,
+            String menu,
             String description,
             Double calories,
             Double carbs,

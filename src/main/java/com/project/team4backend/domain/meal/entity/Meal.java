@@ -18,6 +18,9 @@ public class Meal {
     @Column(name = "meal_id")
     private Long mealId;
 
+    @Column(name = "menu")
+    private String menu; // 메뉴
+
     @Column(name = "date", nullable = false) // 식단 날짜.
     private LocalDate date;
 
@@ -40,4 +43,13 @@ public class Meal {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member; // 어떤 회원이 등록한 식단인지
+
+    public void updateMeal(String menu,String description, Double calories, Double carbs, Double protein, Double fat) {
+        this.menu = menu;
+        this.description = description;
+        this.calories = calories;
+        this.carbs = carbs;
+        this.protein = protein;
+        this.fat = fat;
+    }
 }

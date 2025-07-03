@@ -8,6 +8,7 @@ public class MealReqDTO {
     @Builder
     public record MealReq(
             LocalDate date,
+            String menu,
             String description,
             Double calories,
             Double carbs,
