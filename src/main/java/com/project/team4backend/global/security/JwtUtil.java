@@ -85,6 +85,7 @@ public class JwtUtil {
                 .and()
                 .subject(customUserDetails.getUsername()) //Subject 에 username (email) 추가
                 .claim("isTempPassword", customUserDetails.getIsTempPassword().name()) // 비밀번호 상태 추가
+                .claim("role", customUserDetails.getRole())// 사용자 role 추가
                 .issuedAt(Date.from(issuedAt)) // 현재 시간 추가
                 .expiration(Date.from(expiration)) //만료 시간 추가
                 .signWith(secretKey) //signature 추가
