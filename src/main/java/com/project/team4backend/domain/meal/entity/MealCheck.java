@@ -16,7 +16,7 @@ public class MealCheck {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long checkId;
 
-    @Column(name = "date")
+    @Column(name = "date", unique = true)
     private LocalDate date;
 
     @Column(name = "is_checked")

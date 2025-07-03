@@ -17,8 +17,8 @@ public class Meal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mealId;
 
-    @Column(name = "date", unique = true)
-    private LocalDate date; //일자별로
+    @Column(name = "date")
+    private LocalDate date;
 
     @Column(name = "description")
     private String description;
