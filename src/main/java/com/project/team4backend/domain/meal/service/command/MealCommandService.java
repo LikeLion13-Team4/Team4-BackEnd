@@ -6,7 +6,8 @@ import com.project.team4backend.domain.member.entity.Member;
 import java.time.LocalDate;
 
 public interface MealCommandService {
-    void createMeal(MealReqDTO.MealReq dto, Member member);
+
+    void createMeal(MealReqDTO.MealReq dto, String email);
 
     void updateMeal(Long mealId, MealReqDTO.MealReq req, String email);
 

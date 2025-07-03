@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -27,7 +25,12 @@ public class MealCommandServiceImpl implements MealCommandService {
     private final MemberRepository memberRepository;
 
     @Override
-    public void createMeal(MealReqDTO.MealReq dto, Member member) {
+    public void createMeal(MealReqDTO.MealReq dto, String email) {
+        // email → Member 조회
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        // 식단 저장
         Meal meal = MealConverter.toEntity(dto, member);
         mealRepository.save(meal);
 
