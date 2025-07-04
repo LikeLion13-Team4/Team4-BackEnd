@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -35,10 +37,12 @@ public class MealCommandServiceImpl implements MealCommandService {
         mealRepository.save(meal);
 
         // 자동 출석 체크
-        boolean alreadyChecked = mealCheckRepository.findByMemberAndDate(member, dto.date()).isPresent();
+        LocalDate today = LocalDate.now();
+
+        boolean alreadyChecked = mealCheckRepository.findByMemberAndDate(member, today).isPresent();
         if (!alreadyChecked) {
             MealCheck check = MealCheck.builder()
-                    .date(dto.date())
+                    .date(today)
                     .isChecked(true)
                     .member(member)
                     .build();
