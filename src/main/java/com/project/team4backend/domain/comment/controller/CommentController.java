@@ -1,7 +1,7 @@
 package com.project.team4backend.domain.comment.controller;
 
 import com.project.team4backend.domain.comment.dto.request.CommentReqDTO;
-import com.project.team4backend.domain.comment.dto.responese.CommentResDTO;
+import com.project.team4backend.domain.comment.dto.response.CommentResDTO;
 import com.project.team4backend.domain.comment.service.command.CommentCommandService;
 import com.project.team4backend.domain.comment.service.query.CommentQueryService;
 import com.project.team4backend.global.apiPayload.CustomResponse;

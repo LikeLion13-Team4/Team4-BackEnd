@@ -1,7 +1,7 @@
 package com.project.team4backend.domain.comment.service.query;
 
 import com.project.team4backend.domain.comment.converter.CommentConverter;
-import com.project.team4backend.domain.comment.dto.responese.CommentResDTO;
+import com.project.team4backend.domain.comment.dto.response.CommentResDTO;
 import com.project.team4backend.domain.comment.entity.Comment;
 import com.project.team4backend.domain.comment.exception.CommentErrorCode;
 import com.project.team4backend.domain.comment.exception.CommentException;

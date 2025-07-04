@@ -1,7 +1,7 @@
 package com.project.team4backend.domain.comment.service.command;
 
 import com.project.team4backend.domain.comment.dto.request.CommentReqDTO;
-import com.project.team4backend.domain.comment.dto.responese.CommentResDTO;
+import com.project.team4backend.domain.comment.dto.response.CommentResDTO;
 
 public interface CommentCommandService {
     //댓글 등록
