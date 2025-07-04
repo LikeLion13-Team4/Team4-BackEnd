@@ -1,5 +1,7 @@
 package com.project.team4backend.global.security.handler;
 
+import com.project.team4backend.domain.auth.exception.auth.AuthErrorCode;
+import com.project.team4backend.domain.auth.exception.auth.AuthException;
 import com.project.team4backend.global.security.JwtUtil;
 import com.project.team4backend.domain.auth.service.RefreshTokenService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,7 +48,8 @@ public class CustomLogoutHandler implements LogoutHandler {
                 //Refresh Token Redis에서 삭제
                 refreshTokenService.deleteRefreshToken(email);
                 log.info("[LogoutHandler] Redis에서 Refresh Token 삭제 완료");
-            }
+            } else  // 토큰이 없으면 로그인을 하지 않은 상태이므로 인증 필요 예외 처리
+                throw new AuthException(AuthErrorCode._UNAUTHORIZED);
 
         SecurityContextHolder.clearContext();
     }
