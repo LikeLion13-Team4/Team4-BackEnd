@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - cookcheck-network
+    restart: unless-stopped
+
+  app:
+    image: tjgustjr/cookcheck:latest
+    container_name: cookcheck_container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    env_file:
+      - /home/ubuntu/secrets/.env
+    networks:
+      - cookcheck-network
+    restart: unless-stopped
+
+networks:
+  cookcheck-network:
+    driver: bridge
