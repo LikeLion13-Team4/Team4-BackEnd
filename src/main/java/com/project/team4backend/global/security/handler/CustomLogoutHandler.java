@@ -49,7 +49,7 @@ public class CustomLogoutHandler implements LogoutHandler {
                 refreshTokenService.deleteRefreshToken(email);
                 log.info("[LogoutHandler] Redis에서 Refresh Token 삭제 완료");
             } else  // 토큰이 없으면 로그인을 하지 않은 상태이므로 인증 필요 예외 처리
-                throw new AuthException(AuthErrorCode._UNAUTHORIZED);
+                throw new AuthException(AuthErrorCode.AUTH_UNAUTHORIZED);
 
         SecurityContextHolder.clearContext();
     }

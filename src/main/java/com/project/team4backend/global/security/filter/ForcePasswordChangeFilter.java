@@ -43,8 +43,8 @@ public class ForcePasswordChangeFilter extends OncePerRequestFilter {
                 boolean isAllowed = ALLOWED_PATHS.stream().anyMatch(requestURI::startsWith);
                 if (!isAllowed) {
                     log.warn("[ ForcePasswordChangeFilter ] 임시 비밀번호 상태로 허용되지 않은 경로 접근 시도");
-                    String errorCode = AuthErrorCode._FORBIDDEN.getCode();
-                    String errorMessage = AuthErrorCode._FORBIDDEN.getMessage();
+                    String errorCode = AuthErrorCode.AUTH_FORBIDDEN.getCode();
+                    String errorMessage = AuthErrorCode.AUTH_FORBIDDEN.getMessage();
 
                     CustomResponse<String> responseBody = CustomResponse.onFailure(errorCode, errorMessage);
 

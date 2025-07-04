@@ -70,7 +70,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         String storedToken = refreshTokenService.getRefreshToken(email);
         if (storedToken == null || !storedToken.equals(refreshToken)) {
-            throw new AuthException(AuthErrorCode._INVALID_TOKEN);
+            throw new AuthException(AuthErrorCode.AUTH_INVALID_TOKEN);
         }
         //Refresh Token 이 유효한지 검사
         jwtUtil.validateToken(refreshToken);

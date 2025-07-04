@@ -44,7 +44,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         try {
             requestBody = objectMapper.readValue(request.getInputStream(), AuthReqDTO.LoginReqDTO.class);
         } catch (IOException e) {
-            throw new AuthException(AuthErrorCode._NOT_FOUND);
+            throw new AuthException(AuthErrorCode.AUTH_NOT_FOUND);
         }
 
         //Request Body 에서 추출
