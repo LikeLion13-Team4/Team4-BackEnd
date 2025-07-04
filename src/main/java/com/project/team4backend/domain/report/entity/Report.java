@@ -38,6 +38,9 @@ public class Report extends BaseEntity {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @Column(name = "feedback_text", columnDefinition = "TEXT")
+    private String feedbackText;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
