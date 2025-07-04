@@ -1,4 +1,5 @@
-application.yml
+# 로컬 설정 파일 무시
+/src/main/resources/application-local.yml
 
 HELP.md
 .gradle
