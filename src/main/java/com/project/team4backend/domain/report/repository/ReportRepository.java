@@ -5,9 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
     @Modifying
     void deleteByMemberIdAndStartDateAndEndDate(Long memberId, LocalDate start, LocalDate end);
+
+    Optional<Report> findByMemberIdAndStartDateAndEndDate(Long memberId, LocalDate startDate, LocalDate endDate);
 }
