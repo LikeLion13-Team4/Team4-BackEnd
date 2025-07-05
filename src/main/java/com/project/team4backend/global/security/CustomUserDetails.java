@@ -15,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
+    private final Long id;
     private final String email;
     private final String password;
     private final String role;
