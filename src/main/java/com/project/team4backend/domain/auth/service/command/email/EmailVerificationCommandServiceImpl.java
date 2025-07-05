@@ -41,9 +41,9 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
     }
     //이메일 인증 코드 검증
     @Override
-    public void checkVerificationCode(EmailVerificationReqDTO.EmailVerifyReqDTO emailVerifyReqDTO) {
+    public EmailVerification checkVerificationCode(EmailVerificationReqDTO.EmailVerifyReqDTO emailVerifyReqDTO) {
         EmailVerification emailVerification = emailVerificationRepository
-                .findTopByEmailOrderByCreatedAtDesc(emailVerifyReqDTO.email())
+                .findTopByEmailAndTypeOrderByCreatedAtDesc(emailVerifyReqDTO.email(), emailVerifyReqDTO.type())
                 .orElseThrow(() -> new EmailVerificationException(EmailVerificationErrorCode._NOT_FOUND));
 
         // 인증 완료 여부 판단 - 이메일이 동일해서 가져왔는데 인증 되어있을 수 있기 때문이다.
@@ -60,11 +60,14 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
         if (!emailVerification.getCode().equals(emailVerifyReqDTO.authCode())) {
             throw new EmailVerificationException(EmailVerificationErrorCode._BAD_REQUEST);
         }
-
-        // 검증 성공 → 인증 완료 상태로 저장
+        return emailVerification;
+    }
+    // 이메일 인증 코드 검증 후 최종적으로 isVerified = true 처리 로직
+    @Override
+    public void emailVerificationAndMark(EmailVerificationReqDTO.EmailVerifyReqDTO emailVerifyReqDTO) {
+        EmailVerification emailVerification = checkVerificationCode(emailVerifyReqDTO);
         emailVerification.markAsVerified();
     }
-
     //이메일 전송 전용 메서드
     @Override
     public void sendHtmlEmail(String to, String subject, String htmlBody) {
