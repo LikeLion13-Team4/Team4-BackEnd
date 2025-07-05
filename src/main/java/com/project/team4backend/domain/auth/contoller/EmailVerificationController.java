@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "EmailVerification 관련 api", description = "EmailVerification 관련 API입니다.")
+@Tag(name = "EmailVerification API", description = "EmailVerification 관련 API입니다.")
 @RequestMapping("/api/v1/auths/emailVerifications")
 public class EmailVerificationController {
 
@@ -39,15 +39,15 @@ public class EmailVerificationController {
             }
         }
 
-        String code = emailVerificationCommandService.createEmailVerification(emailSendReqDTO); // 이메일인증 정보 생성
-        emailVerificationCommandService.sendVerificationCode(emailSendReqDTO.email(), code); // 인증 코드 전송
+        String message = emailVerificationCommandService.createEmailVerification(emailSendReqDTO); // 이메일인증 정보 생성
+        emailVerificationCommandService.sendVerificationCode(emailSendReqDTO.email(), message); // 인증 코드 전송
         return CustomResponse.onSuccess("이메일 인증 코드가 전송 되었습니다.");
     }
 
     @Operation(method = "POST", summary = "이메일 인증 코드 검증", description = "이메일 인증용 코드를 db에 저장된 정보와 비교")
     @PostMapping("/check")
     public CustomResponse<String> CheckEmailVerificationCode(@RequestBody EmailVerificationReqDTO.EmailVerifyReqDTO emailVerifyReqDTO) {
-        emailVerificationCommandService.checkVerificationCode(emailVerifyReqDTO);
+        emailVerificationCommandService.emailVerificationAndMark(emailVerifyReqDTO);
         return CustomResponse.onSuccess("이메일 인증 완료 되었습니다.");
     }
 }

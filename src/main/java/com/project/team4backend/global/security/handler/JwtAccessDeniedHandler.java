@@ -18,8 +18,8 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType("application/json; charset=UTF-8");
         response.setStatus(403);
         CustomResponse<Object> errorResponse = CustomResponse.onFailure(
-                AuthErrorCode._FORBIDDEN.getCode(),
-                AuthErrorCode._FORBIDDEN.getMessage(),
+                AuthErrorCode.AUTH_FORBIDDEN.getCode(),
+                AuthErrorCode.AUTH_FORBIDDEN.getMessage(),
                 null
         );
         ObjectMapper mapper = new ObjectMapper();

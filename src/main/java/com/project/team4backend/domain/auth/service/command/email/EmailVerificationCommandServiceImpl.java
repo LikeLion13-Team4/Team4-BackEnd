@@ -34,37 +34,40 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
     //이메일인증 정보 생성
     @Override
     public String createEmailVerification(EmailVerificationReqDTO.EmailSendReqDTO emailSendReqDTO) {
-        String code = generateCode();
-        EmailVerification emailVerification = EmailVerificationConverter.toEmailVerification(emailSendReqDTO, code);
+        String message = generateCode();
+        EmailVerification emailVerification = EmailVerificationConverter.toEmailVerification(emailSendReqDTO, message);
         emailVerificationRepository.save(emailVerification);
-        return code;
+        return message;
     }
     //이메일 인증 코드 검증
     @Override
-    public void checkVerificationCode(EmailVerificationReqDTO.EmailVerifyReqDTO emailVerifyReqDTO) {
+    public EmailVerification checkVerificationCode(EmailVerificationReqDTO.EmailVerifyReqDTO emailVerifyReqDTO) {
         EmailVerification emailVerification = emailVerificationRepository
-                .findTopByEmailOrderByCreatedAtDesc(emailVerifyReqDTO.email())
-                .orElseThrow(() -> new EmailVerificationException(EmailVerificationErrorCode._NOT_FOUND));
+                .findTopByEmailAndTypeOrderByCreatedAtDesc(emailVerifyReqDTO.email(), emailVerifyReqDTO.type())
+                .orElseThrow(() -> new EmailVerificationException(EmailVerificationErrorCode.EMAIL_NOT_FOUND));
 
         // 인증 완료 여부 판단 - 이메일이 동일해서 가져왔는데 인증 되어있을 수 있기 때문이다.
         if (emailVerification.getIsVerified()) {
-            throw new EmailVerificationException(EmailVerificationErrorCode._ALREADY_VERIFIED);
+            throw new EmailVerificationException(EmailVerificationErrorCode.EMAIL_ALREADY_VERIFIED);
         }
 
         // 해당 코드 만료 여부 판단
         if (emailVerification.getExpireAt().isBefore(LocalDateTime.now())) {
-            throw new EmailVerificationException(EmailVerificationErrorCode._EXPIRED);
+            throw new EmailVerificationException(EmailVerificationErrorCode.EMAIL_EXPIRED);
         }
 
         // 해당 코드 일치 여부 판단
-        if (!emailVerification.getCode().equals(emailVerifyReqDTO.authCode())) {
-            throw new EmailVerificationException(EmailVerificationErrorCode._BAD_REQUEST);
+        if (!emailVerification.getMessage().equals(emailVerifyReqDTO.authCode())) {
+            throw new EmailVerificationException(EmailVerificationErrorCode.EMAIL_BAD_REQUEST);
         }
-
-        // 검증 성공 → 인증 완료 상태로 저장
+        return emailVerification;
+    }
+    // 이메일 인증 코드 검증 후 최종적으로 isVerified = true 처리 로직
+    @Override
+    public void emailVerificationAndMark(EmailVerificationReqDTO.EmailVerifyReqDTO emailVerifyReqDTO) {
+        EmailVerification emailVerification = checkVerificationCode(emailVerifyReqDTO);
         emailVerification.markAsVerified();
     }
-
     //이메일 전송 전용 메서드
     @Override
     public void sendHtmlEmail(String to, String subject, String htmlBody) {
@@ -85,15 +88,15 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
 
     // 임시 비번 이메일로 전송
     @Override
-    public void sendTempPassword(String email) {
-        String html = emailTemplateBuilder.buildTempPasswordHtml(generateTempPassword());
-        sendHtmlEmail(email, "인증번호 안내", html);
+    public void sendTempPassword(String email, String message) {
+        String html = emailTemplateBuilder.buildTempPasswordHtml(message);
+        sendHtmlEmail(email, "임시 비밀번호 전송", html);
     }
 
     // 인증 코드 이메일로 전송
     @Override
-    public void sendVerificationCode(String email, String code) {
-        String html = emailTemplateBuilder.buildVerifyEmailHtml(code);
+    public void sendVerificationCode(String email, String message) {
+        String html = emailTemplateBuilder.buildVerifyEmailHtml(message);
         sendHtmlEmail(email, "인증 코드 전송", html);
     }
 
@@ -101,13 +104,6 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
     private String generateCode() {
         Random random = new SecureRandom();
         return String.format("%06d", random.nextInt(1_000_000));
-    }
-    //임시 비밀번호 발급용 메서드
-    private String generateTempPassword() {
-        return new SecureRandom().ints(10, 33, 122)
-                .mapToObj(i -> (char) i)
-                .map(String::valueOf)
-                .collect(Collectors.joining());
     }
 }
 

@@ -20,10 +20,19 @@ public class Auth {
     private String password;
 
     @Column(name = "is_temp")
+    @Enumerated(EnumType.STRING)
     private IsTempPassword isTempPassword;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateIsTempPassword(IsTempPassword isTempPassword) {
+        this.isTempPassword = isTempPassword;
+    }
 
 }

@@ -22,6 +22,20 @@ public class AuthReqDTO {
     public record LoginReqDTO(
             String email,
             String password
-    ) {
+    ){
+    }
+    @Builder
+    public record UpdatePasswordReqDTO(
+            String currentPassword,
+            String newPassword,
+            String authCode
+    ){
+    }
+
+    @Builder
+    public record TempPasswordReqDTO(
+            String email,
+            String authCode
+    ){
     }
 }
