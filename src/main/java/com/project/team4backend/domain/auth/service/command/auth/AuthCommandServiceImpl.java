@@ -4,6 +4,7 @@ import com.project.team4backend.domain.auth.converter.AuthConverter;
 import com.project.team4backend.domain.auth.dto.request.AuthReqDTO;
 import com.project.team4backend.domain.auth.dto.response.AuthResDTO;
 import com.project.team4backend.domain.auth.entity.Auth;
+import com.project.team4backend.domain.auth.entity.EmailVerification;
 import com.project.team4backend.domain.auth.exception.auth.AuthErrorCode;
 import com.project.team4backend.domain.auth.exception.auth.AuthException;
 import com.project.team4backend.domain.auth.repository.AuthRepository;
@@ -34,7 +35,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final AuthRepository authRepository;
 
     @Override
-    public AuthResDTO.SignUpResDTO signUp(AuthReqDTO.SignupReqDTO signupReqDTO) {
+    public AuthResDTO.SignUpResDTO signUp(AuthReqDTO.SignupReqDTO signupReqDTO, EmailVerification emailVerification) {
         // Member 생성
         Member member = MemberConverter.toMember(signupReqDTO);
 
@@ -54,6 +55,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         Auth auth =  AuthConverter.toAuth(member, encodedPassword);
         // Auth 엔티티 저장
         authRepository.save(auth);
+
+        // SIGNUP 타입의 emailVerfication 정보의 isVerified = true 설정 -> 이메일 인증 성공 최종 승인
+        emailVerification.markAsVerified();
+
         // 응답 DTO로 변환 후 return
         return AuthConverter.toSignUpResDTO(member);
     }

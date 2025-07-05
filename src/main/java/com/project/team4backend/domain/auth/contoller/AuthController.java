@@ -1,8 +1,10 @@
 package com.project.team4backend.domain.auth.contoller;
 
+import com.project.team4backend.domain.auth.converter.EmailVerificationConverter;
 import com.project.team4backend.domain.auth.dto.request.AuthReqDTO;
-import com.project.team4backend.domain.auth.dto.request.EmailVerificationReqDTO;
 import com.project.team4backend.domain.auth.dto.response.AuthResDTO;
+import com.project.team4backend.domain.auth.entity.EmailVerification;
+import com.project.team4backend.domain.auth.entity.enums.Type;
 import com.project.team4backend.domain.auth.service.command.auth.AuthCommandService;
 import com.project.team4backend.domain.auth.service.command.email.EmailVerificationCommandService;
 import com.project.team4backend.domain.member.repository.MemberRepository;
@@ -22,7 +24,7 @@ import java.security.SignatureException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auths")
-@Tag(name = "Auth 관련 api", description = "Auth 관련 API입니다.")
+@Tag(name = "Auth API", description = "Auth 관련 API입니다.")
 public class AuthController {
 
     private final AuthCommandService authCommandService;
@@ -35,13 +37,8 @@ public class AuthController {
     @PostMapping("/signup")
     public CustomResponse<AuthResDTO.SignUpResDTO> signIn(@RequestBody AuthReqDTO.SignupReqDTO signupReqDTO) {
         //이메일 인증 코드 검증
-        emailVerificationCommandService.checkVerificationCode(
-                new EmailVerificationReqDTO.EmailVerifyReqDTO(
-                        signupReqDTO.email(),
-                        signupReqDTO.authCode()
-                )
-        );
-        return CustomResponse.onSuccess(authCommandService.signUp(signupReqDTO));
+        EmailVerification emailVerification = emailVerificationCommandService.checkVerificationCode(EmailVerificationConverter.toEmailVerifyReqDTO(signupReqDTO.email(), signupReqDTO.authCode(), Type.SIGNUP));
+        return CustomResponse.onSuccess(authCommandService.signUp(signupReqDTO,emailVerification));
     }
 
     @Operation(method = "POST", summary = "로그인", description = "jwt 발급은 필터에서 처리된다.")
