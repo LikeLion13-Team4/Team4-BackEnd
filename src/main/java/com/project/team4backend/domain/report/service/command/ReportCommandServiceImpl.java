@@ -91,9 +91,18 @@ public class ReportCommandServiceImpl implements ReportCommandService {
 
     @Override
     public void generateFeedback(LocalDate start, LocalDate end, Long memberId) {
+
+
+
         // 1. 회원 조회
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        // isRequestAllowed 메서드를 호출하여 GPT 요청이 허용되는지 확인
+        if (!isRequestAllowed(member)) {
+            // 허용되지 않으면 예외 발생
+            throw new CustomException(ReportErrorCode.GPT_CALL_LIMIT_EXCEEDED);
+        }
 
         // 2. 기간 내 식사 조회
         List<Meal> meals = mealRepository.findAllByMemberAndDateBetween(member, start, end);
@@ -114,5 +123,25 @@ public class ReportCommandServiceImpl implements ReportCommandService {
 
         // 6. 피드백 저장
         report.updateFeedback(feedback);
+    }
+
+    //gpt 호출제한 확인 매서드
+    public boolean isRequestAllowed(Member member) {
+        LocalDate today = LocalDate.now();
+
+        if (member.getLastRequestDate() == null || !member.getLastRequestDate().isEqual(today)) {
+            member.setRequestCount(1);
+            member.setLastRequestDate(today);
+            memberRepository.save(member);
+            return true;
+        } //날이 지나거나 처음이면 호출횟수 1로 초기화
+
+        if (member.getRequestCount() < 3) { //3번 횟수제한
+            member.setRequestCount(member.getRequestCount() + 1);
+            memberRepository.save(member);
+            return true;
+        }
+
+        return false;
     }
 }
