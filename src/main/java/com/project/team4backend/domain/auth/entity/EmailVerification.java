@@ -24,6 +24,7 @@ public class EmailVerification {
     private String code;
 
     @Column(name = "type")
+    @Enumerated(EnumType.STRING)
     private Type type;
 
     @Column(name = "created_at")

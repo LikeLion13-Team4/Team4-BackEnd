@@ -20,6 +20,7 @@ public class Auth {
     private String password;
 
     @Column(name = "is_temp")
+    @Enumerated(EnumType.STRING)
     private IsTempPassword isTempPassword;
 
     @OneToOne(fetch = FetchType.LAZY)
