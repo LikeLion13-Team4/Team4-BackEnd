@@ -37,8 +37,8 @@ public class ReportCommandServiceImpl implements ReportCommandService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        // 2. 기존 보고서가 있으면 삭제 또는 갱신 처리
-        reportRepository.deleteByMemberIdAndStartDateAndEndDate(memberId, start, end); // 선택적
+        // 2. 기존 보고서 삭제 (회원당 1개의 보고서 유지)
+        reportRepository.deleteByMemberId(memberId);reportRepository.deleteByMemberId(memberId);
 
         // 3. 기간 내 Meal 목록 조회
         List<Meal> meals = mealRepository.findAllByMemberAndDateBetween(member, start, end);
@@ -46,11 +46,26 @@ public class ReportCommandServiceImpl implements ReportCommandService {
             throw new CustomException(MealErrorCode.MEAL_NOT_FOUND);
         }
 
-        // 4. 총 영양소 계산
-        double totalCalories = meals.stream().mapToDouble(Meal::getCalories).sum();
-        double totalCarbs = meals.stream().mapToDouble(Meal::getCarbs).sum();
-        double totalProtein = meals.stream().mapToDouble(Meal::getProtein).sum();
-        double totalFat = meals.stream().mapToDouble(Meal::getFat).sum();
+        // 4. 총 영양소 계산 (null 허용)
+        double totalCalories = meals.stream()
+                .filter(m -> m.getCalories() != null)
+                .mapToDouble(Meal::getCalories)
+                .sum();
+
+        double totalCarbs = meals.stream()
+                .filter(m -> m.getCarbs() != null)
+                .mapToDouble(Meal::getCarbs)
+                .sum();
+
+        double totalProtein = meals.stream()
+                .filter(m -> m.getProtein() != null)
+                .mapToDouble(Meal::getProtein)
+                .sum();
+
+        double totalFat = meals.stream()
+                .filter(m -> m.getFat() != null)
+                .mapToDouble(Meal::getFat)
+                .sum();
 
         long days = ChronoUnit.DAYS.between(start, end) + 1;
         double averageCalories = days > 0 ? totalCalories / days : 0;
@@ -72,6 +87,7 @@ public class ReportCommandServiceImpl implements ReportCommandService {
         // 6. DTO 변환 후 반환
         return ReportConverter.toReportResDTO(report);
     }
+
 
     @Override
     public void generateFeedback(LocalDate start, LocalDate end, Long memberId) {
