@@ -16,4 +16,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     void deleteByMemberId(@Param("memberId") Long memberId);
 
     Optional<Report> findByMemberIdAndStartDateAndEndDate(Long memberId, LocalDate startDate, LocalDate endDate);
+
+    Optional<Report> findByMemberId(Long memberId);
 }

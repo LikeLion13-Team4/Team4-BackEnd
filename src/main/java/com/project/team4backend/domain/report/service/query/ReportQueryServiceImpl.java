@@ -10,16 +10,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ReportQueryServiceImpl implements ReportQueryService {
     private final ReportRepository reportRepository;
 
-    public ReportResDTO.ReportRes getReportByRange(LocalDate start, LocalDate end, Long memberId) {
-        Report report = reportRepository.findByMemberIdAndStartDateAndEndDate(memberId, start, end)
+
+    @Override
+    public ReportResDTO.ReportRes getReport(Long memberId) {
+        Report report = reportRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new CustomException(ReportErrorCode.REPORT_NOT_FOUND));
         return ReportConverter.toReportResDTO(report);
     }
