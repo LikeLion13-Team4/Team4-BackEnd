@@ -27,6 +27,7 @@ import java.time.LocalDate;
 public class ReportController {
 
     private final ReportCommandService reportCommandService;
+    private final ReportQueryService reportQueryService;
     private final MemberRepository memberRepository;
 
     @PostMapping
@@ -60,5 +61,18 @@ public class ReportController {
         reportCommandService.generateFeedback(request.startDate(), request.endDate(), memberId);
 
         return CustomResponse.onSuccess("AI 피드백이 생성되었습니다.");
+    }
+
+    @GetMapping
+    public CustomResponse<ReportResDTO.ReportRes> getReport(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        String email = userDetails.getUsername();
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Long memberId = member.getId();
+
+        ReportResDTO.ReportRes report = reportQueryService.getReport(memberId);
+        return CustomResponse.onSuccess(report);
     }
 }

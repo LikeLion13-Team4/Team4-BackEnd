@@ -13,7 +13,7 @@ public class GPTReqDTO {
         private String model;
         private List<Message> messages;
         private int temperature = 1;
-        private int maxTokens = 256;
+        private int maxTokens = 500;
         private int topP = 1;
         private int frequencyPenalty = 0;
         private int presencePenalty = 0;
