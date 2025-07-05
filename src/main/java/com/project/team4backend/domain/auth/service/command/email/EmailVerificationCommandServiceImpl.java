@@ -88,15 +88,15 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
 
     // 임시 비번 이메일로 전송
     @Override
-    public void sendTempPassword(String email) {
-        String html = emailTemplateBuilder.buildTempPasswordHtml(generateTempPassword());
-        sendHtmlEmail(email, "인증번호 안내", html);
+    public void sendTempPassword(String email, String message) {
+        String html = emailTemplateBuilder.buildTempPasswordHtml(message);
+        sendHtmlEmail(email, "임시 비밀번호 전송", html);
     }
 
     // 인증 코드 이메일로 전송
     @Override
-    public void sendVerificationCode(String email, String code) {
-        String html = emailTemplateBuilder.buildVerifyEmailHtml(code);
+    public void sendVerificationCode(String email, String message) {
+        String html = emailTemplateBuilder.buildVerifyEmailHtml(message);
         sendHtmlEmail(email, "인증 코드 전송", html);
     }
 
@@ -104,13 +104,6 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
     private String generateCode() {
         Random random = new SecureRandom();
         return String.format("%06d", random.nextInt(1_000_000));
-    }
-    //임시 비밀번호 발급용 메서드
-    private String generateTempPassword() {
-        return new SecureRandom().ints(10, 33, 122)
-                .mapToObj(i -> (char) i)
-                .map(String::valueOf)
-                .collect(Collectors.joining());
     }
 }
 

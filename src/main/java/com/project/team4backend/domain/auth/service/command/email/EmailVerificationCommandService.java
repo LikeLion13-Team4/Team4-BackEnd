@@ -12,7 +12,7 @@ public interface EmailVerificationCommandService {
 
     void sendHtmlEmail(String to, String subject, String htmlContent);
 
-    void sendTempPassword(String email);
+    void sendTempPassword(String email, String message);
 
-    void sendVerificationCode(String email, String code);
+    void sendVerificationCode(String email, String message);
 }

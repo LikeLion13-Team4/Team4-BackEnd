@@ -9,6 +9,7 @@ import com.project.team4backend.domain.auth.entity.enums.IsTempPassword;
 import com.project.team4backend.domain.auth.exception.auth.AuthErrorCode;
 import com.project.team4backend.domain.auth.exception.auth.AuthException;
 import com.project.team4backend.domain.auth.repository.AuthRepository;
+import com.project.team4backend.domain.auth.service.command.email.EmailVerificationCommandService;
 import com.project.team4backend.domain.member.converter.MemberConverter;
 import com.project.team4backend.domain.member.entity.Member;
 import com.project.team4backend.domain.member.exception.MemberErrorCode;
@@ -24,6 +25,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -35,6 +39,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final SecurityConfig securityConfig;
     private final MemberRepository memberRepository;
     private final AuthRepository authRepository;
+    private final EmailVerificationCommandService emailVerificationCommandService;
 
     @Override
     public AuthResDTO.SignUpResDTO signUp(AuthReqDTO.SignupReqDTO signupReqDTO, EmailVerification emailVerification) {
@@ -91,6 +96,26 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         // CHANGE_PASSWORD 타입의 emailVerfication 정보의 isVerified = true 설정 -> 이메일 인증 성공 최종 승인
         emailVerification.markAsVerified();
     }
+    @Override
+    public void updateTempPassword(AuthReqDTO.TempPasswordReqDTO tempPasswordReqDTO, EmailVerification emailVerification) {
+        Member member = memberRepository.findByEmail(emailVerification.getEmail())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Auth auth = authRepository.findByMemberId(member.getId())
+                .orElseThrow(() -> new AuthException(AuthErrorCode.AUTH_NOT_FOUND));
+
+        String tempPassword = generateTempPassword();
+        String encodedPassword = null;
+        if (tempPassword != null) {
+            encodedPassword = securityConfig.passwordEncoder().encode(tempPassword);
+            auth.updatePassword(encodedPassword);
+        }
+        //저장된 임시 비밀번호 전송
+        emailVerificationCommandService.sendTempPassword(emailVerification.getEmail(), tempPassword);
+        //임시 비번임을 설정
+        auth.updateIsTempPassword(IsTempPassword.IS_TEMP_PASSWORD);
+        // TEMP_PASSWORD 타입의 emailVerfication 정보의 isVerified = true 설정 -> 이메일 인증 성공 최종 승인
+        emailVerification.markAsVerified();
+    }
 
     @Override
     public AuthResDTO.JwtResDTO reissueToken(AuthResDTO.JwtResDTO jwtDto) {
@@ -112,5 +137,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         log.info("[ Auth Service ] Refresh Token 이 유효합니다.");
 
         return jwtUtil.reissueToken(refreshToken);
+    }
+    //임시 비밀번호 발급용 메서드
+    private String generateTempPassword() {
+        String charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+
+        return random.ints(10, 0, charSet.length())
+                .mapToObj(charSet::charAt)
+                .map(String::valueOf)
+                .collect(Collectors.joining());
     }
 }

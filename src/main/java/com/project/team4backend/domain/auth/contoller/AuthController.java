@@ -55,13 +55,22 @@ public class AuthController {
 
     @Operation(method = "POST", summary ="비밀번호 변경", description = "비밀번호 변경 api인데, 정확히는 비밀번호를 입력해서 수정이 아닌 새로 생성해서 덮어쓰기")
     @PostMapping("/reset-password")
-    public CustomResponse<String> updatePassword(
+    public CustomResponse<String> resetUpdatePassword(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestBody AuthReqDTO.UpdatePasswordReqDTO updatePasswordReqDTO){
         //이메일 인증 코드 검증
         EmailVerification emailVerification = emailVerificationCommandService.checkVerificationCode(EmailVerificationConverter.toEmailVerifyReqDTO(customUserDetails.getEmail(), updatePasswordReqDTO.authCode(), Type.CHANGE_PASSWORD));
         authCommandService.updatePassword(updatePasswordReqDTO, emailVerification);
         return CustomResponse.onSuccess("비밀번호가 변경 되었습니다.");
+    }
+
+    @Operation(method = "POST", summary = "임시 비밀번호 발급", description = "이메일 인증을 통해 임시 비밀번호를 이메일로 전송")
+    @PostMapping("/reset-temp-password")
+    public CustomResponse<String> resetTempPassword(@RequestBody AuthReqDTO.TempPasswordReqDTO tempPasswordReqDTO){
+        //이메일 인증 코드 검증
+        EmailVerification emailVerification = emailVerificationCommandService.checkVerificationCode(EmailVerificationConverter.toEmailVerifyReqDTO(tempPasswordReqDTO.email(), tempPasswordReqDTO.authCode(), Type.TEMP_PASSWORD));
+        authCommandService.updateTempPassword(tempPasswordReqDTO, emailVerification);
+        return CustomResponse.onSuccess("임시 비밀번호가 전송되었습니다.");
     }
 
     //토큰 재발급 API

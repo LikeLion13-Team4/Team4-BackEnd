@@ -12,6 +12,9 @@ public interface AuthCommandService {
     //비밀번호 변경
     void updatePassword(AuthReqDTO.UpdatePasswordReqDTO updatePasswordReqDTO, EmailVerification emailVerification);
 
+    //임시비밀번호 발급
+    void updateTempPassword(AuthReqDTO.TempPasswordReqDTO tempPasswordReqDTO, EmailVerification emailVerification);
+
     //토큰 재발급
     AuthResDTO.JwtResDTO reissueToken(AuthResDTO.JwtResDTO jwtDto);
 }

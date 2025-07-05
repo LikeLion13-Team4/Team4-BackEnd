@@ -31,4 +31,8 @@ public class Auth {
         this.password = password;
     }
 
+    public void updateIsTempPassword(IsTempPassword isTempPassword) {
+        this.isTempPassword = isTempPassword;
+    }
+
 }
