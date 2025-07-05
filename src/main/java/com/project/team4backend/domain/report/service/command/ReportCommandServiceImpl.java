@@ -28,6 +28,8 @@ public class ReportCommandServiceImpl implements ReportCommandService {
     private final ReportRepository reportRepository;
     private final MemberRepository memberRepository;
     private final MealRepository mealRepository;
+    private final GPTClient gptClient;
+    private final GPTPromptBuilder gptPromptBuilder;
 
     @Override
     public ReportResDTO.ReportRes createReport(LocalDate start, LocalDate end, Long memberId) {
@@ -73,29 +75,28 @@ public class ReportCommandServiceImpl implements ReportCommandService {
 
     @Override
     public void generateFeedback(LocalDate start, LocalDate end, Long memberId) {
-        /*
+        // 1. 회원 조회
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        // 1. 기간 내 식사 조회
+        // 2. 기간 내 식사 조회
         List<Meal> meals = mealRepository.findAllByMemberAndDateBetween(member, start, end);
 
         if (meals.isEmpty()) {
             throw new CustomException(MealErrorCode.MEAL_NOT_FOUND);
         }
 
-        // 2. GPT 프롬프트 생성 (예: 음식 이름, 시간, 영양소 등 기반)
+        // 3. GPT 프롬프트 생성
         String prompt = gptPromptBuilder.buildFromMeals(meals);
 
-        // 3. GPT 호출 (예시)
+        // 4. GPT 호출
         String feedback = gptClient.generateFeedback(prompt);
 
-        // 4. 보고서 조회 or 생성
+        // 5. 보고서 조회
         Report report = reportRepository.findByMemberIdAndStartDateAndEndDate(memberId, start, end)
-                .orElseThrow(() -> new CustomException(ReportErrorCode.R));
+                .orElseThrow(() -> new CustomException(ReportErrorCode.REPORT_NOT_FOUND)); // 예외 수정 필요
 
-        // 5. 피드백 저장
+        // 6. 피드백 저장
         report.updateFeedback(feedback);
-        */
     }
 }
