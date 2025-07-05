@@ -9,7 +9,7 @@ import java.util.List;
 public class GPTReqDTO {
     @Data
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public class GPTRequest {
+    public static class GPTRequest {
         private String model;
         private List<Message> messages;
         private int temperature = 1;
