@@ -24,6 +24,9 @@ public class Report extends BaseEntity {
     @Column(name = "total_calories")
     private Double totalCalories;
 
+    @Column(name = "average_calories")
+    private Double averageCalories;
+
     @Column(name = "carbs_ratio") // ex. 45.6 (%)
     private Double carbsRatio;
 
