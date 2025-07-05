@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             Optional<Auth> authEntity = authRepository.findByMemberId(member.getId());
             Auth auth = authEntity.get();
 
-            return new CustomUserDetails(member.getId(), member.getEmail(), auth.getPassword(), role, auth.getIsTempPassword());
+            return new CustomUserDetails(member.getEmail(), auth.getPassword(), role, auth.getIsTempPassword());
         }
         throw new UsernameNotFoundException("사용자가 존재하지 않습니다.");
     }
