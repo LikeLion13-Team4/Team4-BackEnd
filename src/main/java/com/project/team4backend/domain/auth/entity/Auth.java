@@ -27,4 +27,8 @@ public class Auth {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
 }

@@ -5,12 +5,14 @@ import com.project.team4backend.domain.auth.dto.request.AuthReqDTO;
 import com.project.team4backend.domain.auth.dto.response.AuthResDTO;
 import com.project.team4backend.domain.auth.entity.Auth;
 import com.project.team4backend.domain.auth.entity.EmailVerification;
+import com.project.team4backend.domain.auth.entity.enums.IsTempPassword;
 import com.project.team4backend.domain.auth.exception.auth.AuthErrorCode;
 import com.project.team4backend.domain.auth.exception.auth.AuthException;
 import com.project.team4backend.domain.auth.repository.AuthRepository;
 import com.project.team4backend.domain.member.converter.MemberConverter;
 import com.project.team4backend.domain.member.entity.Member;
 import com.project.team4backend.domain.member.exception.MemberErrorCode;
+import com.project.team4backend.domain.member.exception.MemberException;
 import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.global.apiPayload.exception.CustomException;
 import com.project.team4backend.global.security.Config.SecurityConfig;
@@ -61,6 +63,33 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         // 응답 DTO로 변환 후 return
         return AuthConverter.toSignUpResDTO(member);
+    }
+    @Override
+    public void updatePassword(AuthReqDTO.UpdatePasswordReqDTO updatePasswordReqDTO, EmailVerification emailVerification) {
+        Member member = memberRepository.findByEmail(emailVerification.getEmail())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Auth auth = authRepository.findByMemberId(member.getId())
+                .orElseThrow(() -> new AuthException(AuthErrorCode.AUTH_NOT_FOUND));
+
+        // 현재 비밀번호가 일치하지 않는 경우
+        if (!securityConfig.passwordEncoder().matches(updatePasswordReqDTO.currentPassword(), auth.getPassword())) {
+            throw new AuthException(AuthErrorCode.AUTH_WRONG_PASSWORD);
+        }
+        // 새 비밀번호가 현재 비밀번호와 같은 경우
+        if (updatePasswordReqDTO.newPassword().equals(updatePasswordReqDTO.currentPassword())) {
+            throw new AuthException(AuthErrorCode.AUTH_SAME_PASSWORD);
+        }
+        // 새 비밀번호 암호화 후 업데이트
+        String encodedNewPassword = securityConfig.passwordEncoder().encode(updatePasswordReqDTO.newPassword());
+        auth.updatePassword(encodedNewPassword);
+
+        //만약 해당 계정이 임시 비번을 발급 받은 상황이었다면
+        if (auth.getIsTempPassword() == IsTempPassword.IS_TEMP_PASSWORD) {
+            auth.updateIsTempPassword(IsTempPassword.NORMAL); // 이제 임시 비밀번호가 아님을 알 수 있다.
+        }
+
+        // CHANGE_PASSWORD 타입의 emailVerfication 정보의 isVerified = true 설정 -> 이메일 인증 성공 최종 승인
+        emailVerification.markAsVerified();
     }
 
     @Override

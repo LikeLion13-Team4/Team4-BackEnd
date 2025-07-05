@@ -24,4 +24,11 @@ public class AuthReqDTO {
             String password
     ) {
     }
+    @Builder
+    public record UpdatePasswordReqDTO(
+            String currentPassword,
+            String newPassword,
+            String authCode
+    ){
+    }
 }
