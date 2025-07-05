@@ -25,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ForcePasswordChangeFilter extends OncePerRequestFilter {
     private static final List<String> ALLOWED_PATHS = List.of(
-            "/api/v1/auths/password-reset", "/api/v1/auths/reissue"
+            "/api/v1/auths/reset-password", "/api/v1/auths/reissue", "/api/v1/auths/emailVerifications/send"
     );
 
     @Override
