@@ -19,6 +19,6 @@ public class GPTPromptBuilder {
                         meal.getCarbs(), meal.getProtein(), meal.getFat()
                 ))
                 .collect(Collectors.joining("\n"))
-                + "\n\n위 식단을 기반으로 건강한 식습관 피드백을 작성해주세요.";
+                + "\n\n위 식단을 기반으로 건강한 식습관 피드백을 작성해주세요. 날짜는 신경쓰지말고 전체적인 맥락에서의 조언이 필요합니다. 사용자 설정이기 때문에 일부는 값이 누락될 수도 있습니다";
     }
 }
