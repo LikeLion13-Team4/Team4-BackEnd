@@ -39,8 +39,8 @@ public class EmailVerificationController {
             }
         }
 
-        String code = emailVerificationCommandService.createEmailVerification(emailSendReqDTO); // 이메일인증 정보 생성
-        emailVerificationCommandService.sendVerificationCode(emailSendReqDTO.email(), code); // 인증 코드 전송
+        String message = emailVerificationCommandService.createEmailVerification(emailSendReqDTO); // 이메일인증 정보 생성
+        emailVerificationCommandService.sendVerificationCode(emailSendReqDTO.email(), message); // 인증 코드 전송
         return CustomResponse.onSuccess("이메일 인증 코드가 전송 되었습니다.");
     }
 

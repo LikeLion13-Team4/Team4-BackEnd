@@ -34,10 +34,10 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
     //이메일인증 정보 생성
     @Override
     public String createEmailVerification(EmailVerificationReqDTO.EmailSendReqDTO emailSendReqDTO) {
-        String code = generateCode();
-        EmailVerification emailVerification = EmailVerificationConverter.toEmailVerification(emailSendReqDTO, code);
+        String message = generateCode();
+        EmailVerification emailVerification = EmailVerificationConverter.toEmailVerification(emailSendReqDTO, message);
         emailVerificationRepository.save(emailVerification);
-        return code;
+        return message;
     }
     //이메일 인증 코드 검증
     @Override
@@ -57,7 +57,7 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
         }
 
         // 해당 코드 일치 여부 판단
-        if (!emailVerification.getCode().equals(emailVerifyReqDTO.authCode())) {
+        if (!emailVerification.getMessage().equals(emailVerifyReqDTO.authCode())) {
             throw new EmailVerificationException(EmailVerificationErrorCode.EMAIL_BAD_REQUEST);
         }
         return emailVerification;

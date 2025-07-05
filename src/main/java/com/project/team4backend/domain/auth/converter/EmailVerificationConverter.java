@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EmailVerificationConverter {
-    public static EmailVerification toEmailVerification(EmailVerificationReqDTO.EmailSendReqDTO emailSendReqDTO, String code) {
+    public static EmailVerification toEmailVerification(EmailVerificationReqDTO.EmailSendReqDTO emailSendReqDTO, String message) {
         return EmailVerification.builder()
                 .email(emailSendReqDTO.email())
-                .code(code)
+                .message(message)
                 .type(emailSendReqDTO.type())
                 .createdAt(LocalDateTime.now())
                 .expireAt(LocalDateTime.now().plusMinutes(3))

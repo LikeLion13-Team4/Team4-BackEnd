@@ -20,8 +20,8 @@ public class EmailVerification {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "code")
-    private String code;
+    @Column(name = "message")
+    private String message;
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
