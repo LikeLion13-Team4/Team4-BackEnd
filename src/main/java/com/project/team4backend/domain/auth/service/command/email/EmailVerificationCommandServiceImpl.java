@@ -44,21 +44,21 @@ public class EmailVerificationCommandServiceImpl implements EmailVerificationCom
     public EmailVerification checkVerificationCode(EmailVerificationReqDTO.EmailVerifyReqDTO emailVerifyReqDTO) {
         EmailVerification emailVerification = emailVerificationRepository
                 .findTopByEmailAndTypeOrderByCreatedAtDesc(emailVerifyReqDTO.email(), emailVerifyReqDTO.type())
-                .orElseThrow(() -> new EmailVerificationException(EmailVerificationErrorCode._NOT_FOUND));
+                .orElseThrow(() -> new EmailVerificationException(EmailVerificationErrorCode.EMAIL_NOT_FOUND));
 
         // 인증 완료 여부 판단 - 이메일이 동일해서 가져왔는데 인증 되어있을 수 있기 때문이다.
         if (emailVerification.getIsVerified()) {
-            throw new EmailVerificationException(EmailVerificationErrorCode._ALREADY_VERIFIED);
+            throw new EmailVerificationException(EmailVerificationErrorCode.EMAIL_ALREADY_VERIFIED);
         }
 
         // 해당 코드 만료 여부 판단
         if (emailVerification.getExpireAt().isBefore(LocalDateTime.now())) {
-            throw new EmailVerificationException(EmailVerificationErrorCode._EXPIRED);
+            throw new EmailVerificationException(EmailVerificationErrorCode.EMAIL_EXPIRED);
         }
 
         // 해당 코드 일치 여부 판단
         if (!emailVerification.getCode().equals(emailVerifyReqDTO.authCode())) {
-            throw new EmailVerificationException(EmailVerificationErrorCode._BAD_REQUEST);
+            throw new EmailVerificationException(EmailVerificationErrorCode.EMAIL_BAD_REQUEST);
         }
         return emailVerification;
     }
