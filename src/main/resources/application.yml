@@ -43,4 +43,4 @@ spring:
     model: gpt-4.1-nano
     api:
       key: ${GPT_API_KEY}
-      url: https://api.openai.com/v1/chat/completions
+      url: ${GPT_API_URL}
