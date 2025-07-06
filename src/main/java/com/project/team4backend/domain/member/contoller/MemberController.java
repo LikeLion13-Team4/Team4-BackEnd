@@ -18,7 +18,26 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberQueryService memberQueryService;
-    private MemberRepository memberRepository;
+    private final MemberCommandService memberCommandService;
+
+    @Operation(method = "PATCH", summary = "계정 정보 수정", description = "회원 정보 수정 api입니다.")
+    @PatchMapping("/body")
+    public CustomResponse<String> updateMemberAccount(
+            @RequestBody MemberReqDTO.MemberAccountUpdateReqDTO memberAccountUpdateReqDTO,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        return CustomResponse.onSuccess(memberCommandService.updateMemberAccount(customUserDetails.getEmail(), memberAccountUpdateReqDTO));
+    }
+
+    @Operation(method = "PATCH", summary = "신체 정보 수정", description = "신체 정보 수정 api입니다.")
+    @PatchMapping("/account")
+    public CustomResponse<String> updateMember(
+            @RequestBody MemberReqDTO.MemberBodyUpdateReqDTO memberBodyUpdateReqDTO,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        return CustomResponse.onSuccess(memberCommandService.updateMemberBody(customUserDetails.getEmail(), memberBodyUpdateReqDTO));
+    }
+
 
     @Operation(method = "GET", summary = "회원 정보 조회", description = "회원 정보 조회 api입니다.")
     @GetMapping
