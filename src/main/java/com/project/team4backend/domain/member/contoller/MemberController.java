@@ -1,6 +1,8 @@
 package com.project.team4backend.domain.member.contoller;
 
-import com.project.team4backend.domain.member.repository.MemberRepository;
+import com.project.team4backend.domain.member.dto.request.MemberReqDTO;
+import com.project.team4backend.domain.member.dto.response.MemberResDTO;
+import com.project.team4backend.domain.member.service.command.MemberCommandService;
 import com.project.team4backend.domain.member.service.query.MemberQueryService;
 import com.project.team4backend.global.apiPayload.CustomResponse;
 import com.project.team4backend.global.security.CustomUserDetails;
@@ -47,11 +49,13 @@ public class MemberController {
         return CustomResponse.onSuccess(memberQueryService.getMemberPreview(customUserDetails.getEmail()));
     }
 
-//    @Operation(description = "내 정보 조회")
-//    @GetMapping()
-//    public CustomResponse<MemberResDTO.MemberPreviewResDTO> getMember(
-//            @Auth
-//    ) {
-//        return CustomResponse.onSuccess(memberQueryService.getMember(customUserDetails.getUsername()));
-//    }
+    @Operation(method = "DELETE", summary = "회원 탈퇴", description = "회원 탈퇴 작동 시 해당 유저의 is_deleted = true로 바뀜")
+    @DeleteMapping
+    public CustomResponse<String> deleteMember(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        memberCommandService.deleteMember(customUserDetails.getEmail());
+        return CustomResponse.onSuccess("회원정보가 삭제되었습니다.");
+    }
+
 }

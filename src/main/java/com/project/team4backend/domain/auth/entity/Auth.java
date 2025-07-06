@@ -12,6 +12,18 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Auth {
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateIsTempPassword(IsTempPassword isTempPassword) {
+        this.isTempPassword = isTempPassword;
+    }
+
+    public void deleteAuth() {
+        this.isDeleted = true;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,12 +42,5 @@ public class Auth {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    public void updatePassword(String password) {
-        this.password = password;
-    }
-
-    public void updateIsTempPassword(IsTempPassword isTempPassword) {
-        this.isTempPassword = isTempPassword;
-    }
 
 }

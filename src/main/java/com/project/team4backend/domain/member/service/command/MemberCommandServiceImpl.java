@@ -42,4 +42,16 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         boolean changed = member.updateBodyInfo(memberBodyUpdateReqDTO.birthday(), memberBodyUpdateReqDTO.gender(), memberBodyUpdateReqDTO.height(), memberBodyUpdateReqDTO.weight());
         return changed ? "신체정보가 변경되었습니다." : "변경된 정보가 없습니다.";
     }
+
+    //회원 탈퇴
+    @Override
+    public void deleteMember(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(()-> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Auth auth = authRepository.findByMemberId(member.getId())
+                .orElseThrow(()-> new AuthException(AuthErrorCode.AUTH_NOT_FOUND));
+
+        member.deleteMember();
+        auth.deleteAuth();
+    }
 }

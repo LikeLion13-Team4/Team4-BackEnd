@@ -35,6 +35,11 @@ public class Member extends BaseEntity {
         }
         return false;
     }
+
+    public void deleteMember() {
+        this.isDeleted = true;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

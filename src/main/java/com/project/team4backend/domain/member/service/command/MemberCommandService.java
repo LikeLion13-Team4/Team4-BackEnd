@@ -6,4 +6,6 @@ public interface MemberCommandService {
     String updateMemberAccount(String email, MemberReqDTO.MemberAccountUpdateReqDTO memberAccountUpdateReqDTO);
 
     String updateMemberBody(String email, MemberReqDTO.MemberBodyUpdateReqDTO memberBodyUpdateReqDTO);
+
+    void deleteMember(String email);
 }

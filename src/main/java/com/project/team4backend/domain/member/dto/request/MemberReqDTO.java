@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 public class MemberReqDTO {
     @Builder
-    public record MemberUpdateReqDTO (
     public record MemberAccountUpdateReqDTO (
             String nickname
     ){
