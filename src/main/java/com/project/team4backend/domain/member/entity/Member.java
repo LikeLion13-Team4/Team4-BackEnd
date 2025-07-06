@@ -72,4 +72,13 @@ public class Member extends BaseEntity {
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+
+    @Column(name = "request_count")
+    @Setter
+    private Integer requestCount;
+
+    @Column(name = "last_request_date")
+    @Setter
+    private LocalDate lastRequestDate;
+
 }

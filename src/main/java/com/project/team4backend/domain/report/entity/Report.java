@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,14 +24,17 @@ public class Report extends BaseEntity {
     @Column(name = "total_calories")
     private Double totalCalories;
 
-    @Column(name = "total_carbs")
-    private Double totalCarbs;
+    @Column(name = "average_calories")
+    private Double averageCalories;
 
-    @Column(name = "total_protein")
-    private Double totalProtein;
+    @Column(name = "carbs_ratio") // ex. 45.6 (%)
+    private Double carbsRatio;
 
-    @Column(name = "total_fat")
-    private Double totalFat;
+    @Column(name = "protein_ratio")
+    private Double proteinRatio;
+
+    @Column(name = "fat_ratio")
+    private Double fatRatio;
 
     @Column(name = "start_date")
     private LocalDate startDate;
@@ -38,7 +42,18 @@ public class Report extends BaseEntity {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @Column(name = "feedback_text", columnDefinition = "TEXT")
+    private String feedbackText;
+
+    @Column(name = "feedback_generated_at")
+    private LocalDateTime feedbackGeneratedAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    public void updateFeedback(String feedback) {
+        this.feedbackText = feedback;
+        this.feedbackGeneratedAt = LocalDateTime.now();
+    }
 }

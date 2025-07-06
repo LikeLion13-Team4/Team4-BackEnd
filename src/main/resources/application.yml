@@ -38,3 +38,9 @@ spring:
       mail.smtp.auth: true
       mail.smtp.ssl.enable: true
       mail.smtp.ssl.trust: smtp.naver.com
+
+  gpt:
+    model: gpt-4.1-nano
+    api:
+      key: ${GPT_API_KEY}
+      url: https://api.openai.com/v1/chat/completions
