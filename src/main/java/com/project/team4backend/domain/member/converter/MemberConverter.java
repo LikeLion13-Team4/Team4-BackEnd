@@ -19,6 +19,7 @@ public class MemberConverter {
                 .gender(signupReqDTO.gender())
                 .profileImageUrl(null)
                 .role(Role.ROLE_USER)
+                .isDeleted(false)
                 .build();
     }
     public static MemberResDTO.MemberPreviewResDTO toMemberPreviewResDTO(Member member) {

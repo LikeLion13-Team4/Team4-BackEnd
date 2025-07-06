@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface AuthRepository extends JpaRepository<Auth, Long> {
     // member의 id를 통해 해당 member의 auth정 보 가져오기
-    @Query("SELECT a from Auth a WHERE a.member.id = :memberId")
+    @Query("SELECT a from Auth a WHERE a.member.id = :memberId and a.isDeleted = false")
     Optional<Auth> findByMemberId(@Param("memberId") Long memberId);
 }

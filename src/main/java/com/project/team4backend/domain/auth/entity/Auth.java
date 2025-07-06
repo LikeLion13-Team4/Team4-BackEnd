@@ -23,6 +23,9 @@ public class Auth {
     @Enumerated(EnumType.STRING)
     private IsTempPassword isTempPassword;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;

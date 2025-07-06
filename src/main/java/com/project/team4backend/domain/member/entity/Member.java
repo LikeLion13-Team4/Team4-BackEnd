@@ -46,4 +46,7 @@ public class Member extends BaseEntity {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
 }
