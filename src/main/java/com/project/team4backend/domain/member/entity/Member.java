@@ -46,4 +46,13 @@ public class Member extends BaseEntity {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "request_count")
+    @Setter
+    private Integer requestCount;
+
+    @Column(name = "last_request_date")
+    @Setter
+    private LocalDate lastRequestDate;
+
 }
