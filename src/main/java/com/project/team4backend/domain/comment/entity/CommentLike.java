@@ -24,7 +24,6 @@ public class CommentLike {
     @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
-    protected CommentLike() {}
 
     public CommentLike(Member member, Comment comment) {
         this.member = member;
