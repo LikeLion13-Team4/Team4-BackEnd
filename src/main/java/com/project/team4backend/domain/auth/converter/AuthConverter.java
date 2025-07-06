@@ -15,6 +15,7 @@ public class AuthConverter {
         return Auth.builder()
                 .password(encodedPassword)
                 .isTempPassword(IsTempPassword.NORMAL)
+                .isDeleted(false)
                 .member(member)
                 .build();
     }

@@ -17,6 +17,29 @@ import java.time.LocalDate;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Member extends BaseEntity {
 
+    public boolean updateBodyInfo(LocalDate birthday, Gender gender, Double height, Double weight) {
+        if (!this.birthday.equals(birthday) || !this.gender.equals(gender) || !this.height.equals(height) || !this.weight.equals(weight)) {
+            this.birthday = birthday;
+            this.gender = gender;
+            this.height = height;
+            this.weight = weight;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean updateAccountInfo(String nickname) {
+        if (!this.nickname.equals(nickname)) {
+            this.nickname = nickname;
+            return true;
+        }
+        return false;
+    }
+
+    public void deleteMember() {
+        this.isDeleted = true;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,6 +69,9 @@ public class Member extends BaseEntity {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
 
     @Column(name = "request_count")
     @Setter

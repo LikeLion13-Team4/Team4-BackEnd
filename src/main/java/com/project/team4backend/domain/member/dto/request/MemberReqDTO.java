@@ -6,15 +6,18 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 public class MemberReqDTO {
+    @Builder
+    public record MemberAccountUpdateReqDTO (
+            String nickname
+    ){
+    }
 
     @Builder
-    public record MemberUpdateReqDTO (
+    public record MemberBodyUpdateReqDTO (
             LocalDate birthday,
-            String nickname,
             Gender gender,
             Double height,
-            Double weight,
-            String imageUrl
+            Double weight
     ){
     }
 }
