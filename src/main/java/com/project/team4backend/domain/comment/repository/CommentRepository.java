@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     //한 게시글의 모든 댓글과 대댓글을 groups 기준으로 묶고, orders 기준으로 정렬해서 트리 형태로 출력
-    @EntityGraph(attributePaths = {"posts","member"})
+    @EntityGraph(attributePaths = {"post","member"})
     @Query("select c from Comment c where c.post.postId = :id order by c.groups, c.orders") //해당 게시글에 달린 댓글만 조회
     List<Comment> findAlignedCommentByPostId(@Param("id") Long postId);
 
