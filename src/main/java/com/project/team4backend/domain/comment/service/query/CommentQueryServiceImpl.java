@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentQueryServiceImpl implements CommentQueryService {
 
-    PostRepository postRepository;
-    CommentRepository commentRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public List<CommentResDTO.CommentResponseDTO> getCommentsByPost(Long postId) {
