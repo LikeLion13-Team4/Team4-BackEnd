@@ -86,8 +86,10 @@ public class CommentController {
     // 댓글 좋아요
     @PostMapping("/comments/{commentId}/like")
     @Operation(summary = "댓글 좋아요", description = "댓글 ID를 기준으로 좋아요를 누릅니다.")
-    public CustomResponse<Void> likeComment(@PathVariable Long commentId) {
-        commentCommandService.likeComment(commentId);
+    public CustomResponse<Void> likeComment(@PathVariable Long commentId,
+                                            @AuthenticationPrincipal UserDetails userDetails) {
+        String userEmail = userDetails.getUsername();
+        commentCommandService.likeComment(commentId ,userEmail);
         return CustomResponse.onSuccess(null);
     }
 }

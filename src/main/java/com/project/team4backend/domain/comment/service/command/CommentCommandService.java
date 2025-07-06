@@ -14,5 +14,5 @@ public interface CommentCommandService {
     CommentResDTO.CommentResponseDTO updateComment(Long commentId, String memberEmail, CommentReqDTO.CommentUpdateReqDTO dto);
 
     //좋아요 증가
-    void likeComment(Long commentId);
+    void likeComment(Long commentId,String email);
 }

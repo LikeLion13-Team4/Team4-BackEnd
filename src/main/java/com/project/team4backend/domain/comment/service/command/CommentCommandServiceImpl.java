@@ -5,10 +5,14 @@ import com.project.team4backend.domain.comment.converter.CommentConverter;
 import com.project.team4backend.domain.comment.dto.request.CommentReqDTO;
 import com.project.team4backend.domain.comment.dto.response.CommentResDTO;
 import com.project.team4backend.domain.comment.entity.Comment;
+import com.project.team4backend.domain.comment.entity.CommentLike;
 import com.project.team4backend.domain.comment.exception.CommentErrorCode;
 import com.project.team4backend.domain.comment.exception.CommentException;
+import com.project.team4backend.domain.comment.repository.CommentLikeRepository;
 import com.project.team4backend.domain.comment.repository.CommentRepository;
 import com.project.team4backend.domain.member.entity.Member;
+import com.project.team4backend.domain.member.exception.MemberErrorCode;
+import com.project.team4backend.domain.member.exception.MemberException;
 import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.domain.post.entity.Post;
 import com.project.team4backend.domain.post.repository.PostRepository;
@@ -23,6 +27,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     @Override
     public CommentResDTO.CommentCreateResDTO createComment(Long postId, Long parentId, CommentReqDTO.CommentCreateReqDTO dto, String memberEmail) {
@@ -106,10 +111,20 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
     //좋아요 증가
     @Override
-    public void likeComment(Long commentId) {
+    public void likeComment(Long commentId, String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));
 
+        boolean alreadyLiked = commentLikeRepository.existsByMemberAndComment(member, comment);
+
+        if (alreadyLiked) {
+            throw new CommentException(CommentErrorCode.ALREADY_LIKED);
+        }
+
         comment.increaseLikes();
+        commentLikeRepository.save(new CommentLike(member, comment));
     }
 }
