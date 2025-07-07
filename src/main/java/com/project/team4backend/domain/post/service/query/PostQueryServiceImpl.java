@@ -2,6 +2,7 @@ package com.project.team4backend.domain.post.service.query;
 
 import com.project.team4backend.domain.member.entity.Member;
 import com.project.team4backend.domain.member.repository.MemberRepository;
+import com.project.team4backend.domain.post.converter.PostConverter;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.entity.Post;
 import com.project.team4backend.domain.post.repository.PostLikeRepository;
@@ -37,19 +38,7 @@ public class PostQueryServiceImpl implements PostQueryService {
         int scrapCount = postScrapRepository.countByPost(post);
         int commentCount = post.getComments().size(); // 연관관계에 comments 있음
 
-        return PostResDTO.PostDetailResDTO.builder()
-                .postId(post.getPostId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .tags(post.getTags())
-                .imageUrls(post.getImages().stream().map(img -> img.getImageUrl()).toList())
-                .authorNickname(post.getMember().getNickname())
-                .liked(liked)
-                .scrapped(scrapped)
-                .likeCount(likeCount)
-                .scrapCount(scrapCount)
-                .commentCount(commentCount)
-                .createdAt(post.getCreatedAt())
-                .build();
+        return PostConverter.toDetailDTO(post, member, liked, scrapped, likeCount, scrapCount, commentCount);
+
     }
 }

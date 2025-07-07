@@ -20,7 +20,7 @@ public class PostResDTO {
             String title,
             String content,
             Set<PostTagType> tags,
-            List<String> imageUrls,
+            List<ImageDTO> images,
             String authorNickname,
             boolean liked,
             boolean scrapped,
@@ -28,5 +28,23 @@ public class PostResDTO {
             int scrapCount,
             int commentCount,
             LocalDateTime createdAt
+    ) {
+        public record ImageDTO(
+                String imageUrl,
+                String imageUrlKey
+        ) {}
+    }
+
+    @Builder
+    public record PostUpdateResDTO(
+            Long postId,
+            String message
     ) {}
+
+    @Builder
+    public record PostDeleteResDTO(
+            Long postId,
+            String message
+    ) {}
+
 }

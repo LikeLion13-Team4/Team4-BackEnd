@@ -40,7 +40,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
     @Override
-    public void updatePost(Long postId, PostReqDTO.PostUpdateReqDTO dto, String email) {
+    public PostResDTO.PostUpdateResDTO updatePost(Long postId, PostReqDTO.PostUpdateReqDTO dto, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
 
@@ -53,10 +53,12 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         // update는 Post 엔티티 내부 메서드로 실행
         post.update(dto.title(), dto.content(), dto.tags(), dto.images());
+
+        return PostConverter.toUpdateDTO(post);
     }
 
     @Override
-    public void deletePost(Long postId, String email) {
+    public PostResDTO.PostDeleteResDTO deletePost(Long postId, String email) {
         // 1. 사용자 조회
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
@@ -72,6 +74,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         // 4. 삭제
         postRepository.delete(post);
+
+        return PostConverter.toDeleteDTO(postId);
     }
 
 
