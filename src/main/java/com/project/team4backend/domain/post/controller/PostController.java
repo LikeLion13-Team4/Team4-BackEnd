@@ -36,7 +36,6 @@ public class PostController {
     }
 
 
-
     @GetMapping("/{postId}")
     @Operation(summary = "게시글 단건 조회", description = "특정 게시글을 상세 조회합니다.")
     public CustomResponse<PostResDTO.PostDetailResDTO> getPostDetail(
@@ -46,5 +45,29 @@ public class PostController {
         String email = userDetails.getUsername();
         PostResDTO.PostDetailResDTO res = postQueryService.getPostDetail(postId, email);
         return CustomResponse.onSuccess(res);
+    }
+
+    @PutMapping("/{postId}")
+    @Operation(summary = "게시글 수정", description = "본인이 작성한 게시글을 수정합니다.")
+    public CustomResponse<Void> updatePost(
+            @PathVariable Long postId,
+            @RequestBody @Valid PostReqDTO.PostUpdateReqDTO dto,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String email = userDetails.getUsername();
+        postCommandService.updatePost(postId, dto, email);
+        return CustomResponse.onSuccess(null);
+    }
+
+    @DeleteMapping("/{postId}")
+    @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
+    public CustomResponse<Void> deletePost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String email = userDetails.getUsername();
+        postCommandService.deletePost(postId, email);
+
+        return CustomResponse.onSuccess(null);
     }
 }

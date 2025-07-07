@@ -5,4 +5,8 @@ import com.project.team4backend.domain.post.dto.request.PostReqDTO;
 
 public interface PostCommandService {
     PostResDTO.PostCreateResDTO createPost(PostReqDTO.PostCreateReqDTO dto, String Email);
+
+    void updatePost(Long postId, PostReqDTO.PostUpdateReqDTO dto, String email);
+
+    void deletePost(Long postId, String email);
 }

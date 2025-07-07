@@ -38,4 +38,40 @@ public class PostCommandServiceImpl implements PostCommandService {
                 .message("게시글이 등록되었습니다.")
                 .build();
     }
+
+    @Override
+    public void updatePost(Long postId, PostReqDTO.PostUpdateReqDTO dto, String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
+
+        if (!post.getMember().equals(member)) {
+            throw new PostException(PostErrorCode.UNAUTHORIZED_POST_UPDATE);
+        } //본인것만 수정
+
+        post.update(dto.title(), dto.content(), dto.tags(), dto.imageUrls());
+    }
+
+    @Override
+    public void deletePost(Long postId, String email) {
+        // 1. 사용자 조회
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
+
+        // 2. 게시글 조회 (작성자와 이미지 fetch)
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
+
+        // 3. 작성자 확인
+        if (!post.getMember().equals(member)) {
+            throw new PostException(PostErrorCode.UNAUTHORIZED_POST_DELETE);
+        }
+
+        // 4. 삭제
+        postRepository.delete(post);
+    }
+
+
 }

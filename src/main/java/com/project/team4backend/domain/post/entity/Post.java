@@ -47,6 +47,18 @@ public class Post extends BaseEntity {
     @Builder.Default // 빌더 패턴 사용 시 기본값 설정을 위함
     private List<Comment> comments = new ArrayList<>();
 
+    public void update(String title, String content, Set<PostTagType> tags, List<String> imageUrls) {
+        this.title = title;
+        this.content = content;
+        this.tags = tags;
+
+        // 기존 이미지 비우고 새로 설정
+        this.images.clear();
+        if (imageUrls != null) {
+            imageUrls.forEach(url -> this.images.add(PostImage.builder().post(this).imageUrl(url).build()));
+        }
+    }
+
 
 
 }

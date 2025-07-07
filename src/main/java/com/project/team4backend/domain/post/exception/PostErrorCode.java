@@ -18,7 +18,7 @@ public enum PostErrorCode implements BaseErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "P006", "작성자 회원 정보를 찾을 수 없습니다."),
     INVALID_TAG_COUNT(HttpStatus.BAD_REQUEST, "P007", "태그는 최소 한 개 이상 선택해야 합니다."),
     POST_IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "P008", "게시글 이미지 업로드에 실패했습니다."),
-    POST_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "P009", "게시글 이미지를 찾을 수 없습니다."),
+    POST_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "P009", "게시글 이미지를 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;

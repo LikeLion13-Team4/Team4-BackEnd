@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    @EntityGraph(attributePaths = {"images", "member"})
+    @EntityGraph(attributePaths = {"images", "member"}) //이미지 주소,멤버 미리 끌어오기
     Optional<Post> findById(Long postId);
 
 
