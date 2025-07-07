@@ -47,6 +47,12 @@ public class Post extends BaseEntity {
     @Builder.Default // 빌더 패턴 사용 시 기본값 설정을 위함
     private List<Comment> comments = new ArrayList<>();
 
+
+    public void addImage(PostImage image) {
+        this.images.add(image);
+        image.setPost(this); // 양쪽 다 맞춰줌 양방향 동기화 매서드
+    }
+
     public void update(String title, String content, Set<PostTagType> tags, List<String> imageUrls) {
         this.title = title;
         this.content = content;
@@ -55,10 +61,12 @@ public class Post extends BaseEntity {
         // 기존 이미지 비우고 새로 설정
         this.images.clear();
         if (imageUrls != null) {
-            imageUrls.forEach(url -> this.images.add(PostImage.builder().post(this).imageUrl(url).build()));
+            imageUrls.forEach(url -> {
+                PostImage image = PostImage.builder().imageUrl(url).build();
+                this.addImage(image);
+            });
         }
+
+
     }
-
-
-
 }

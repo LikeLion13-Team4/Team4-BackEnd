@@ -15,10 +15,20 @@ public class PostImage extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long imageId;
 
+    @Column(name = "image_url",length = 2048, nullable = false)
+    private String imageUrl;
+
+    @Column(name = "image_url_key", nullable = false)
+    private String imageUrlKey;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(nullable = false)
-    private String imageUrl;
+    // 양방향 연관관계 편의용(동기화) setter
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
 }
