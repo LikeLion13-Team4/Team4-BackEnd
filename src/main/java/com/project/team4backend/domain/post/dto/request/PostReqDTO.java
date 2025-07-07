@@ -14,4 +14,11 @@ public class PostReqDTO {
             Set<PostTagType> tags,
             List<String> imageUrls // 여러 이미지
     ) {}
+
+    public record PostUpdateReqDTO(
+            String title,
+            String content,
+            Set<PostTagType> tags,
+            List<String> imageUrls
+    ) {}
 }
