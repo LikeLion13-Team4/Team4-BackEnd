@@ -1,11 +1,18 @@
 package com.project.team4backend.domain.post.entity;
 
+import com.project.team4backend.domain.comment.entity.Comment;
 import com.project.team4backend.domain.member.entity.Member;
+import com.project.team4backend.domain.post.dto.request.PostReqDTO;
+import com.project.team4backend.domain.post.enums.PostTagType;
 import com.project.team4backend.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -20,16 +27,48 @@ public class Post extends BaseEntity {
     @Column(length = 100)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "imageUrl")
-    private String imageUrl;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<PostImage> images = new ArrayList<>();
 
-    @Column(name = "like_count")
-    private Integer likeCount;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"))
+    @Column(name = "tag_name")
+    @Enumerated(EnumType.STRING)
+    private Set<PostTagType> tags = new HashSet<>(); // 태그 복수선택를 위해 Set으로 관리
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default // 빌더 패턴 사용 시 기본값 설정을 위함
+    private List<Comment> comments = new ArrayList<>();
+
+
+    public void addImage(PostImage image) {
+        this.images.add(image);
+        image.setPost(this); // 양쪽 다 맞춰줌 양방향 동기화 매서드
+    }
+
+    public void update(String title, String content, Set<PostTagType> tags, List<PostReqDTO.PostUpdateReqDTO.ImageDTO> imageDTOs) {
+        this.title = title;
+        this.content = content;
+        this.tags = tags;
+
+        this.images.clear();
+        if (imageDTOs != null) {
+            imageDTOs.forEach(dto -> {
+                PostImage image = PostImage.builder()
+                        .imageUrl(dto.imageUrl())
+                        .imageUrlKey(dto.imageUrlKey())
+                        .post(this) // 연관관계 설정
+                        .build();
+                this.images.add(image);
+            });
+        }
+    }
 }
