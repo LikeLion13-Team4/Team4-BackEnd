@@ -49,9 +49,10 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         if (!post.getMember().equals(member)) {
             throw new PostException(PostErrorCode.UNAUTHORIZED_POST_UPDATE);
-        } //본인것만 수정
+        }
 
-        post.update(dto.title(), dto.content(), dto.tags(), dto.imageUrls());
+        // update는 Post 엔티티 내부 메서드로 실행
+        post.update(dto.title(), dto.content(), dto.tags(), dto.images());
     }
 
     @Override

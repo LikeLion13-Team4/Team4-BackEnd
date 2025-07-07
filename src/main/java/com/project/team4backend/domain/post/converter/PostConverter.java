@@ -14,14 +14,16 @@ public class PostConverter {
                 .member(member)
                 .build();
 
-        if (req.imageUrls() != null) {
-            req.imageUrls().forEach(url ->
+        if (req.images() != null) {
+            req.images().forEach(dto ->
                     post.getImages().add(PostImage.builder()
                             .post(post)
-                            .imageUrl(url)
-                            .build())
+                            .imageUrl(dto.imageUrl())
+                            .imageUrlKey(dto.imageUrlKey())
+                            .build()
+                    )
             );
-        }//쓰읍;;;
+        }
 
         return post;
     }

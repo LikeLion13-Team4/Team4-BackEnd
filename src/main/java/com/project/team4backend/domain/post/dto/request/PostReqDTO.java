@@ -12,13 +12,24 @@ public class PostReqDTO {
             String title,
             String content,
             Set<PostTagType> tags,
-            List<String> imageUrls // 여러 이미지
-    ) {}
+            List<ImageDTO> images // 여러 이미지
+    ) {
+        public record ImageDTO(
+                String imageUrl,
+                String imageUrlKey
+        ) {}
+    }
 
+    @Builder
     public record PostUpdateReqDTO(
             String title,
             String content,
             Set<PostTagType> tags,
-            List<String> imageUrls
-    ) {}
+            List<ImageDTO> images
+    ) {
+        public record ImageDTO(
+                String imageUrl,
+                String imageUrlKey
+        ) {}
+    }
 }
