@@ -86,6 +86,18 @@ public class PostController {
         return CustomResponse.onSuccess(postQueryService.getScrappedPosts(pageable, email));
     }
 
+    @GetMapping("/liked")
+    @Operation(summary = "좋아요한 게시글 목록 조회", description = "로그인한 사용자가 좋아요한 게시글을 페이지네이션으로 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getLikedPosts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        String email = userDetails.getUsername();
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return CustomResponse.onSuccess(postQueryService.getLikedPosts(email, pageable));
+    }
+
     @PutMapping("/{postId}")
     @Operation(summary = "게시글 수정", description = "본인이 작성한 게시글을 수정합니다.")
     public CustomResponse<PostResDTO.PostUpdateResDTO> updatePost(

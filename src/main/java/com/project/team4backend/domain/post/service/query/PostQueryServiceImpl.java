@@ -7,6 +7,7 @@ import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.domain.post.converter.PostConverter;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.entity.Post;
+import com.project.team4backend.domain.post.entity.PostLike;
 import com.project.team4backend.domain.post.entity.PostScrap;
 import com.project.team4backend.domain.post.exception.PostErrorCode;
 import com.project.team4backend.domain.post.exception.PostException;
@@ -88,5 +89,26 @@ public class PostQueryServiceImpl implements PostQueryService {
                 .toList();
 
         return PostConverter.toPostPageDTO(scrapPage.map(PostScrap::getPost), postDTOs);
+    }
+
+    //좋아요 목록 조회
+    @Override
+    public PostResDTO.PostPageResDTO getLikedPosts(String email, Pageable pageable) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(PostErrorCode.MEMBER_NOT_FOUND));
+
+        Page<PostLike> likedPage = postLikeRepository.findByMember(member, pageable);
+
+        List<PostResDTO.PostSimpleDTO> posts = likedPage.getContent().stream()
+                .map(PostLike::getPost)
+                .map(post -> {
+                    int likeCount = postLikeRepository.countByPost(post);
+                    int scrapCount = postScrapRepository.countByPost(post);
+                    int commentCount = post.getComments().size();
+                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
+                })
+                .toList();
+
+        return PostConverter.toPostPageDTO(likedPage.map(PostLike::getPost), posts);
     }
 }

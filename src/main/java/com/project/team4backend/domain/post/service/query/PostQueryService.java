@@ -8,5 +8,9 @@ public interface PostQueryService {
 
     PostResDTO.PostPageResDTO getAllPosts(Pageable pageable);
 
+    //스크랩한 목록 조회
     PostResDTO.PostPageResDTO getScrappedPosts(Pageable pageable, String email);
+
+    //좋아요 목록 조회
+    PostResDTO.PostPageResDTO getLikedPosts(String email, Pageable pageable);
 }
