@@ -9,7 +9,7 @@ import com.project.team4backend.global.security.handler.CustomLogoutHandler;
 import com.project.team4backend.global.security.handler.CustomLogoutSuccessHandler;
 import com.project.team4backend.global.security.handler.JwtAccessDeniedHandler;
 import com.project.team4backend.global.security.handler.JwtAuthenticationEntryPoint;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,7 +26,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration // 빈 등록
 @EnableWebSecurity // 필터 체인 관리 시작 어노테이션
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -37,6 +36,23 @@ public class SecurityConfig {
     private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
     private final RedisTemplate<String, String> redisTemplate;
 
+    public SecurityConfig(
+            AuthenticationConfiguration authenticationConfiguration,
+            JwtUtil jwtUtil,
+            JwtAccessDeniedHandler jwtAccessDeniedHandler,
+            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+            CustomLogoutHandler customLogoutHandler,
+            CustomLogoutSuccessHandler customLogoutSuccessHandler,
+            @Qualifier("tokenRedisTemplate") RedisTemplate<String, String> redisTemplate
+    ) {
+        this.authenticationConfiguration = authenticationConfiguration;
+        this.jwtUtil = jwtUtil;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.customLogoutHandler = customLogoutHandler;
+        this.customLogoutSuccessHandler = customLogoutSuccessHandler;
+        this.redisTemplate = redisTemplate;
+    }
 
     //인증이 필요하지 않은 url
     private final String[] allowUrl = {

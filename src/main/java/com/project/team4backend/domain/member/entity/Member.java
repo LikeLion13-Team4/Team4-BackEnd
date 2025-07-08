@@ -40,6 +40,20 @@ public class Member extends BaseEntity {
         this.isDeleted = true;
     }
 
+    public void selectImage(String fileKey) {
+        this.profileImageKey = fileKey;
+    }
+
+    public void saveImage(String ImageUrl) {
+        this.profileImageUrl = ImageUrl;
+    }
+
+    public void deleteProfileImage() {
+        this.profileImageUrl = null;
+        this.profileImageKey = null;
+    }
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -65,6 +79,9 @@ public class Member extends BaseEntity {
 
     @Column(name = "profile_image_url")
     private String profileImageUrl;
+
+    @Column(name = "profile_image_key")
+    private String profileImageKey;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)

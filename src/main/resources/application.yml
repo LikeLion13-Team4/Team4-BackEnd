@@ -26,7 +26,7 @@ spring:
   jwt:
     secret: ${JWT_SECRET}
     token:
-      access-expiration-time: 360000
+      access-expiration-time: 3600000
       refresh-expiration-time: 86400000
 
   mail:
@@ -38,6 +38,13 @@ spring:
       mail.smtp.auth: true
       mail.smtp.ssl.enable: true
       mail.smtp.ssl.trust: smtp.naver.com
+aws:
+  s3:
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
+    region: ${AWS_REGION}
+    bucket-name: ${AWS_S3_BUCKET}
+    presigned-url-duration: 15
 
 gpt.model: gpt-4.1-nano
 gpt.api.key: ${GPT_API_KEY}

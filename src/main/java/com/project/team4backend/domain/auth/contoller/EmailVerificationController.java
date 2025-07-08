@@ -28,12 +28,12 @@ public class EmailVerificationController {
     public CustomResponse<String> SendEmailVerificationCode(@RequestBody EmailVerificationReqDTO.EmailSendReqDTO emailSendReqDTO) {
         switch (emailSendReqDTO.type()) {
             case SIGNUP -> {
-                if (memberRepository.existsByEmail(emailSendReqDTO.email())) {
+                if (memberRepository.existsByEmailAndIsDeletedFalse(emailSendReqDTO.email())) {
                     throw new MemberException(MemberErrorCode.MEMBER_EMAIL_DUPLICATE);
                 }
             }
             case TEMP_PASSWORD, CHANGE_PASSWORD -> {
-                if (!memberRepository.existsByEmail(emailSendReqDTO.email())) {
+                if (!memberRepository.existsByEmailAndIsDeletedFalse(emailSendReqDTO.email())) {
                     throw new MemberException(MemberErrorCode.MEMBER_EMAIL_DUPLICATE);
                 }
             }
