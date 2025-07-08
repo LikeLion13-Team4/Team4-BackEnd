@@ -44,6 +44,10 @@ public class Member extends BaseEntity {
         this.profileImageKey = fileKey;
     }
 
+    public void saveImage(String ImageUrl) {
+        this.profileImageKey = ImageUrl;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

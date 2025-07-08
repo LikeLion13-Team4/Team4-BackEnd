@@ -69,6 +69,60 @@ public class ImageCommandServiceImpl implements ImageCommandService {
             throw new ImageException(ImageErrorCode.IMAGE_UPLOAD_FAIL);
         }
     }
+
+    /**
+     * 이미지 사용 확정 (commit)
+     */
+    @Override
+    public String commit(String fileKey) {
+
+        if (fileKey == null || fileKey.trim().isEmpty()) {
+            throw new ImageException(ImageErrorCode.IMAGE_KEY_MISSING);
+        }
+
+        try {
+            // S3에 파일이 실제로 업로드되었는지 확인
+            if (!isFileExists(fileKey)) {
+                log.warn("fileKey를 찾을 수 없습니다: {}", fileKey);
+                throw new ImageException(ImageErrorCode.IMAGE_NOT_FOUND);
+            }
+
+            // Redis에서 추적 정보 제거 (더 이상 정리 대상이 아님)
+            redisImageTracker.remove(fileKey);
+
+            log.info("이미지가 성공적으로 저장되었습니다: {}", fileKey);
+        } catch (Exception e) {
+            throw new ImageException(ImageErrorCode.IMAGE_COMMIT_FAIL);
+        }
+        return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + fileKey;
+    }
+
+    /**
+     * 이미지 실제 삭제
+     * @param fileKey 파일 키
+     */
+    @Override
+    public void delete(String fileKey) {
+        if (fileKey == null || fileKey.trim().isEmpty()) {
+            throw new ImageException(ImageErrorCode.IMAGE_KEY_MISSING);
+        }
+
+        try {
+            // S3에서 파일 삭제
+            DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileKey)
+                    .build();
+
+            s3Client.deleteObject(deleteRequest);
+
+            // Redis에서도 추적 정보 제거
+            redisImageTracker.remove(fileKey);
+        } catch (Exception e) {
+            throw new ImageException(ImageErrorCode.IMAGE_DELETE_FAIL);
+        }
+    }
+
     /**
      * 파일 존재 여부 확인
      */

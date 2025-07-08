@@ -1,7 +1,14 @@
 package com.project.team4backend.domain.member.contoller;
 
+import com.project.team4backend.domain.image.dto.request.ImageReqDTO;
+import com.project.team4backend.domain.image.dto.response.ImageResDTO;
+import com.project.team4backend.domain.image.service.command.ImageCommandService;
 import com.project.team4backend.domain.member.dto.request.MemberReqDTO;
 import com.project.team4backend.domain.member.dto.response.MemberResDTO;
+import com.project.team4backend.domain.member.entity.Member;
+import com.project.team4backend.domain.member.exception.MemberErrorCode;
+import com.project.team4backend.domain.member.exception.MemberException;
+import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.domain.member.service.command.MemberCommandService;
 import com.project.team4backend.domain.member.service.query.MemberQueryService;
 import com.project.team4backend.global.apiPayload.CustomResponse;
@@ -33,6 +40,18 @@ public class MemberController {
 
         memberCommandService.selectProfileImage(customUserDetails.getEmail(), presignedUrlResDTO.fileKey()); // member의 profileImageKey에 fileKey 저장
         return CustomResponse.onSuccess(presignedUrlResDTO);
+    }
+
+    @Operation(method = "POST", summary = "프로필 이미지 업로드2", description = "선택한 프로필 이미지 저장 api, 이때 업로드")
+    @PostMapping("/profile-image2")
+    public CustomResponse<ImageResDTO.SaveImageResDTO> saveProfileImages(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestBody ImageReqDTO.SaveImageReqDTO saveImageReqDTO) {
+
+        Member member = memberRepository.findByEmail(customUserDetails.getEmail())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        String fileKey = member.getProfileImageKey();
+        return CustomResponse.onSuccess(memberCommandService.saveProfileImage(member, fileKey, imageCommandService.commit(fileKey), saveImageReqDTO));
     }
 
     @Operation(method = "GET", summary = "회원 정보 조회", description = "회원 정보 조회 api입니다.")
