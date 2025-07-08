@@ -5,8 +5,14 @@ import com.project.team4backend.domain.post.entity.Post;
 import com.project.team4backend.domain.post.entity.PostLike;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
-    boolean existsByPostAndMember(Post post, Member member); // 내가 스크랩 했는지
+import java.util.Optional;
 
-    int countByPost(Post post); // 해당 게시글 스크랩 수
+public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
+    boolean existsByPostAndMember(Post post, Member member);
+
+    Optional<PostLike> findByPostAndMember(Post post, Member member);
+
+    int countByPost(Post post);
+
+
 }

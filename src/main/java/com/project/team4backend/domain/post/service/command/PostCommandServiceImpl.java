@@ -6,12 +6,18 @@ import com.project.team4backend.domain.post.converter.PostConverter;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.dto.request.PostReqDTO;
 import com.project.team4backend.domain.post.entity.Post;
+import com.project.team4backend.domain.post.entity.PostLike;
+import com.project.team4backend.domain.post.entity.PostScrap;
 import com.project.team4backend.domain.post.exception.PostErrorCode;
 import com.project.team4backend.domain.post.exception.PostException;
+import com.project.team4backend.domain.post.repository.PostLikeRepository;
 import com.project.team4backend.domain.post.repository.PostRepository;
+import com.project.team4backend.domain.post.repository.PostScrapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -20,6 +26,9 @@ public class PostCommandServiceImpl implements PostCommandService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final PostLikeRepository postLikeRepository;
+    private final PostScrapRepository postScrapRepository;
+
 
     @Override
     public PostResDTO.PostCreateResDTO createPost(PostReqDTO.PostCreateReqDTO dto, String Email) {
@@ -77,6 +86,54 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         return PostConverter.toDeleteDTO(postId);
     }
+
+    // 좋아요 증가 감소
+    @Override
+    public PostResDTO.ToggleResDTO toggleLike(Long postId, String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
+
+        Optional<PostLike> existing = postLikeRepository.findByPostAndMember(post, member); //해당 유저가 이미 눌렀는지 확인
+
+        boolean toggled;
+        if (existing.isPresent()) {
+            postLikeRepository.delete(existing.get()); // 이미눌렀면 삭제
+            toggled = false;
+        } else {
+            PostLike like = PostLike.builder().member(member).post(post).build(); //안눌렀으면 멤버,포스트id를
+            postLikeRepository.save(like); // like엔티티에 저장
+            toggled = true;
+        }
+
+        int likeCount = postLikeRepository.countByPost(post);
+        return PostConverter.toToggleDTO(toggled, likeCount); //증가(true)인지 감소(false)인지와 수정 후 개수 전달
+    }
+
+    @Override
+    public PostResDTO.ToggleResDTO toggleScrap(Long postId, String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
+
+        Optional<PostScrap> existing = postScrapRepository.findByPostAndMember(post, member);
+
+        boolean toggled;
+        if (existing.isPresent()) {
+            postScrapRepository.delete(existing.get());
+            toggled = false;
+        } else {
+            PostScrap scrap = PostScrap.builder().member(member).post(post).build();
+            postScrapRepository.save(scrap);
+            toggled = true;
+        }
+
+        int scrapCount = postScrapRepository.countByPost(post);
+        return PostConverter.toToggleDTO(toggled, scrapCount);
+    }
+
 
 
 }

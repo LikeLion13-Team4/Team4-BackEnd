@@ -84,5 +84,25 @@ public class PostController {
         return CustomResponse.onSuccess(null);
     }
 
+    @PostMapping("/{postId}/like")
+    @Operation(summary = "게시글 좋아요 토글", description = "해당 게시글에 좋아요를 추가하거나 제거합니다.")
+    public CustomResponse<PostResDTO.ToggleResDTO> toggleLike(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String email = userDetails.getUsername();
+        return CustomResponse.onSuccess(postCommandService.toggleLike(postId, email));
+    }
+
+    @PostMapping("/{postId}/scrap")
+    @Operation(summary = "게시글 스크랩 토글", description = "해당 게시글을 스크랩하거나 스크랩을 해제합니다.")
+    public CustomResponse<PostResDTO.ToggleResDTO> toggleScrap(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String email = userDetails.getUsername();
+        return CustomResponse.onSuccess(postCommandService.toggleScrap(postId, email));
+    }
+
 
 }

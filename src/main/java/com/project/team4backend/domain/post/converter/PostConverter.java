@@ -95,4 +95,11 @@ public class PostConverter {
                 .build();
     }
 
+    public static PostResDTO.ToggleResDTO toToggleDTO(boolean isToggled, int count) {
+        return PostResDTO.ToggleResDTO.builder()
+                .toggled(isToggled)
+                .count(count)
+                .build();
+    }
+
 }

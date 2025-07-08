@@ -67,5 +67,10 @@ public class PostResDTO {
             boolean isLast
     ) {}
 
+    @Builder
+    public record ToggleResDTO(
+            boolean toggled, // true: 추가됨, false: 제거됨
+            int count
+    ) {}
 
 }

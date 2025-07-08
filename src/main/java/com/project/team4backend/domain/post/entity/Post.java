@@ -32,11 +32,11 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false)
     @Builder.Default
-    private int likeCount = 0;
+    private Integer likeCount = 0;
 
     @Column(nullable = false)
     @Builder.Default
-    private int scrapCount = 0;
+    private Integer scrapCount = 0;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
