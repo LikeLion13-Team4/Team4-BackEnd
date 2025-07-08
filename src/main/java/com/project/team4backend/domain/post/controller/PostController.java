@@ -1,10 +1,14 @@
 package com.project.team4backend.domain.post.controller;
 
+import com.project.team4backend.domain.image.dto.request.ImageReqDTO;
+import com.project.team4backend.domain.image.dto.response.ImageResDTO;
+import com.project.team4backend.domain.image.service.command.ImageCommandService;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.dto.request.PostReqDTO;
 import com.project.team4backend.domain.post.service.command.PostCommandService;
 import com.project.team4backend.domain.post.service.query.PostQueryService;
 import com.project.team4backend.global.apiPayload.CustomResponse;
+import com.project.team4backend.global.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -26,7 +30,7 @@ public class PostController {
     private final ImageCommandService imageCommandService;
 
     @PostMapping
-    @Operation(summary = "게시글 등록", description = "회원이 새로운 게시글을 등록합니다.")
+    @Operation(summary = "게시글 등록", description = "회원이 새로운 게시글을 등록합니다., 이미지 첨부 안할거면 images: []로 dto 제출하면 된다.")
     public CustomResponse<PostResDTO.PostCreateResDTO> createPost(
             @RequestBody @Valid PostReqDTO.PostCreateReqDTO dto,
             @AuthenticationPrincipal UserDetails userDetails) {

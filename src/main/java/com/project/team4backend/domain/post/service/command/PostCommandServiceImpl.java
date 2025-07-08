@@ -62,7 +62,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
     @Override
-    public PostResDTO.PostUpdateResDTO updatePost(Long postId, PostReqDTO.PostUpdateReqDTO dto, String email) {
+    public PostResDTO.PostUpdateResDTO updatePost(Long postId, PostReqDTO.PostUpdateReqDTO postUpdateReqDTO, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
@@ -73,10 +73,31 @@ public class PostCommandServiceImpl implements PostCommandService {
             throw new PostException(PostErrorCode.UNAUTHORIZED_POST_UPDATE);
         }
 
-        // update는 Post 엔티티 내부 메서드로 실행
-        List<PostImage> images = PostConverter.toImageEntities(dto.images(), post);
-        post.update(dto.title(), dto.content(), dto.tags(), images);
+        // 기존 이미지 중 삭제 대상만 삭제
+        List<String> newFileKeys = postUpdateReqDTO.images().stream()
+                .map(PostReqDTO.PostUpdateReqDTO.ImageDTO::imageUrlKey)
+                .toList();
 
+        List<PostImage> toDelete = post.getImages().stream()
+                .filter(existing -> !newFileKeys.contains(existing.getImageUrlKey()))
+                .toList();
+
+        toDelete.forEach(img -> imageCommandService.delete(email, img.getImageUrlKey()));
+
+        // 커밋 처리: 새로 추가된 이미지 중 기존에 없던 fileKey만 커밋 때문에 Set 사용 O(1)
+        Set<String> existingFileKeys = post.getImages().stream()
+                .map(PostImage::getImageUrlKey)
+                .collect(Collectors.toSet());
+
+        List<String> newAddedFileKeys = newFileKeys.stream()
+                .filter(fileKey -> !existingFileKeys.contains(fileKey)) // 기존에 없던 fileKey만
+                .toList();
+
+        newAddedFileKeys.forEach(fileKey -> imageCommandService.commit(email, fileKey));
+
+        // update는 Post 엔티티 내부 메서드로 실행
+        List<PostImage> images = PostConverter.toImageEntities(postUpdateReqDTO.images(), post);
+        post.update(postUpdateReqDTO.title(), postUpdateReqDTO.content(), postUpdateReqDTO.tags(), images);
         return PostConverter.toUpdateDTO(post);
     }
 
