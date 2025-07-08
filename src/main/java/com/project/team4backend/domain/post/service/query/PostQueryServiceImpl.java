@@ -5,9 +5,11 @@ import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.domain.post.converter.PostConverter;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.entity.Post;
+import com.project.team4backend.domain.post.exception.PostErrorCode;
 import com.project.team4backend.domain.post.repository.PostLikeRepository;
 import com.project.team4backend.domain.post.repository.PostRepository;
 import com.project.team4backend.domain.post.repository.PostScrapRepository;
+import com.project.team4backend.global.apiPayload.exception.CustomException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,17 +32,17 @@ public class PostQueryServiceImpl implements PostQueryService {
     @Override
     public PostResDTO.PostDetailResDTO getPostDetail(Long postId, String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+                .orElseThrow(() -> new CustomException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+                .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
 
         boolean liked = postLikeRepository.existsByPostAndMember(post, member);
         boolean scrapped = postScrapRepository.existsByPostAndMember(post, member);
 
         int likeCount = postLikeRepository.countByPost(post);
         int scrapCount = postScrapRepository.countByPost(post);
-        int commentCount = post.getComments().size(); // 연관관계에 comments 있음
+        int commentCount = post.getComments().size();
 
         return PostConverter.toDetailDTO(post, member, liked, scrapped, likeCount, scrapCount, commentCount);
 

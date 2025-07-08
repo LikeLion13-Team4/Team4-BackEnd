@@ -30,13 +30,18 @@ public class Post extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private int likeCount = 0;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private int scrapCount = 0;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<PostImage> images = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"))
@@ -44,10 +49,31 @@ public class Post extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Set<PostTagType> tags = new HashSet<>(); // 태그 복수선택를 위해 Set으로 관리
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default // 빌더 패턴 사용 시 기본값 설정을 위함
     private List<Comment> comments = new ArrayList<>();
 
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        this.likeCount = Math.max(0, this.likeCount - 1);
+    }
+
+    public void increaseScrapCount() {
+        this.scrapCount++;
+    }
+
+    public void decreaseScrapCount() {
+        this.scrapCount = Math.max(0, this.scrapCount - 1);
+    }
 
     public void addImage(PostImage image) {
         this.images.add(image);

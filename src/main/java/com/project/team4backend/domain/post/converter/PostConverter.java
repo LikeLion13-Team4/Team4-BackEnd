@@ -70,12 +70,12 @@ public class PostConverter {
     public static PostResDTO.PostSimpleDTO toPostSimpleDTO(Post post) {
         String preview = post.getContent().length() > 100
                 ? post.getContent().substring(0, 100) + "..."
-                : post.getContent();
+                : post.getContent(); //100자 초과하면 ...처리
 
         return PostResDTO.PostSimpleDTO.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
-                .content(preview) // ✅ 여기!
+                .content(preview)
                 .authorNickname(post.getMember().getNickname())
                 .tags(post.getTags())
                 .thumbnailImageUrl(
@@ -88,7 +88,7 @@ public class PostConverter {
     public static PostResDTO.PostPageResDTO toPostPageDTO(Page<Post> postPage, List<PostResDTO.PostSimpleDTO> posts) {
         return PostResDTO.PostPageResDTO.builder()
                 .posts(posts)
-                .currentPage(postPage.getNumber() + 1) // 보통 1부터 시작하게 가공
+                .currentPage(postPage.getNumber() + 1) // 1부터 시작
                 .totalPages(postPage.getTotalPages())
                 .totalElements(postPage.getTotalElements())
                 .isLast(postPage.isLast())
