@@ -115,6 +115,8 @@ public class PostCommandServiceImpl implements PostCommandService {
         if (!post.getMember().equals(member)) {
             throw new PostException(PostErrorCode.UNAUTHORIZED_POST_DELETE);
         }
+        // s3 + redis  모든 이미지 삭제
+        post.getImages().forEach(image -> imageCommandService.delete(email, image.getImageUrlKey()));
 
         // 4. 삭제
         postRepository.delete(post);
