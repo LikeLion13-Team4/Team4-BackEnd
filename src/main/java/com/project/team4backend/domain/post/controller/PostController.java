@@ -10,6 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +50,16 @@ public class PostController {
         return CustomResponse.onSuccess(res);
     }
 
+    @GetMapping("/posts")
+    @Operation(summary = "게시글 전체 조회 (페이지네이션)", description = "페이지네이션을 이용해 게시글 리스트를 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page-1, size, Sort.by(Sort.Direction.DESC, "postId"));
+        return CustomResponse.onSuccess(postQueryService.getAllPosts(pageable));
+    }
+
     @PutMapping("/{postId}")
     @Operation(summary = "게시글 수정", description = "본인이 작성한 게시글을 수정합니다.")
     public CustomResponse<Void> updatePost(
@@ -70,4 +83,6 @@ public class PostController {
 
         return CustomResponse.onSuccess(null);
     }
+
+
 }

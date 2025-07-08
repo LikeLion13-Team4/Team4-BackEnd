@@ -10,8 +10,12 @@ import com.project.team4backend.domain.post.repository.PostRepository;
 import com.project.team4backend.domain.post.repository.PostScrapRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -40,5 +44,15 @@ public class PostQueryServiceImpl implements PostQueryService {
 
         return PostConverter.toDetailDTO(post, member, liked, scrapped, likeCount, scrapCount, commentCount);
 
+    }
+
+    @Override
+    public PostResDTO.PostPageResDTO getAllPosts(Pageable pageable) {
+        Page<Post> postPage = postRepository.findAllByOrderByPostIdDesc(pageable);
+        List<PostResDTO.PostSimpleDTO> posts = postPage.getContent().stream()
+                .map(PostConverter::toPostSimpleDTO)
+                .toList();
+
+        return PostConverter.toPostPageDTO(postPage, posts);
     }
 }

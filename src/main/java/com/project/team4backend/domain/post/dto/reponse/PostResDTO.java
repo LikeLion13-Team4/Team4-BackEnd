@@ -47,4 +47,25 @@ public class PostResDTO {
             String message
     ) {}
 
+    @Builder
+    public record PostSimpleDTO(
+            Long postId,
+            String title,
+            String content,
+            String authorNickname,
+            Set<PostTagType> tags,
+            String thumbnailImageUrl,
+            LocalDateTime createdAt
+    ) {}
+
+    @Builder
+    public record PostPageResDTO(
+            List<PostSimpleDTO> posts,
+            int currentPage,
+            int totalPages,
+            long totalElements,
+            boolean isLast
+    ) {}
+
+
 }
