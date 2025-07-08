@@ -3,6 +3,8 @@ package com.project.team4backend.domain.image.dto.response;
 
 import lombok.Builder;
 
+import java.util.List;
+
 
 public class ImageResDTO {
     @Builder
@@ -11,6 +13,11 @@ public class ImageResDTO {
             String fileKey
     ){
     }
+
+    @Builder
+    public record PresignedUrlListResDTO (
+            List<PresignedUrlResDTO> presignedUrls
+    ){}
 
     @Builder
     public record SaveImageResDTO (

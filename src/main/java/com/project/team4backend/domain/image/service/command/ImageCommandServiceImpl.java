@@ -18,7 +18,9 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,13 +48,28 @@ public class ImageCommandServiceImpl implements ImageCommandService {
      * @return Presigned URL과 파일 키
      */
     @Override
-    public ImageResDTO.PresignedUrlResDTO generatePresignedUrl(String email, ImageReqDTO.PresignedUrlDTO presignedUrlDTO) {
-        validateFileExtension(presignedUrlDTO.fileExtension());
-        validateContentType(presignedUrlDTO.contentType());
     public ImageResDTO.PresignedUrlResDTO generatePresignedUrl(String email, ImageReqDTO.PresignedUrlReqDTO presignedUrlReqDTO) {
         return generateSinglePresignedUrl(email, presignedUrlReqDTO);
     }
 
+    /**
+     * Presigned URL 발급 , 게시글 이미지 전용
+     * @param "fileExtension" 파일 확장자 (예: jpg, png)
+     * @param "contentType" MIME 타입 (예: image/jpeg)
+     * @return Presigned URL과 파일 키
+     */
+    @Override
+    public ImageResDTO.PresignedUrlListResDTO generatePresignedUrlList(String email, ImageReqDTO.PresignedUrlListReqDTO presignedUrlListReqDTO) {
+        if (presignedUrlListReqDTO.images().size() > 5) {
+            throw new ImageException(ImageErrorCode.IMAGE_TOO_MANY_REQUESTS);
+        }
+
+        List<ImageResDTO.PresignedUrlResDTO> resDTOList = presignedUrlListReqDTO.images().stream()
+                .map(presignedUrlReqDTO -> generateSinglePresignedUrl(email, presignedUrlReqDTO))
+                .collect(Collectors.toList());
+
+        return ImageConverter.toPresignedUrlListResDTO(resDTOList);
+    }
 
     /**
      * 단일 Presigned URL 생성 공통 메서드

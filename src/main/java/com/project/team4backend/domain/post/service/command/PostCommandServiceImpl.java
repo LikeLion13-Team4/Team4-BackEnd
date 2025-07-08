@@ -1,5 +1,9 @@
 package com.project.team4backend.domain.post.service.command;
 
+import com.project.team4backend.domain.image.exception.ImageErrorCode;
+import com.project.team4backend.domain.image.exception.ImageException;
+import com.project.team4backend.domain.image.service.RedisImageTracker;
+import com.project.team4backend.domain.image.service.command.ImageCommandService;
 import com.project.team4backend.domain.member.entity.Member;
 import com.project.team4backend.domain.member.exception.MemberErrorCode;
 import com.project.team4backend.domain.member.exception.MemberException;
@@ -17,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -25,16 +31,30 @@ public class PostCommandServiceImpl implements PostCommandService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final ImageCommandService imageCommandService;
+    private final RedisImageTracker redisImageTracker;
 
     @Override
-    public PostResDTO.PostCreateResDTO createPost(PostReqDTO.PostCreateReqDTO dto, String Email) {
+    public PostResDTO.PostCreateResDTO createPost(PostReqDTO.PostCreateReqDTO dto, String email) {
         // 멤버 검증
-        Member member = memberRepository.findByEmail(Email)
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
+        // 이미지 선택 했다면
+        if (dto.images() != null && dto.images().size() > 5) {
+            throw new ImageException(ImageErrorCode.IMAGE_TOO_MANY_REQUESTS);
+        }
 
+        // presigned 검증 및 commit 처리
+        if (dto.images() != null) {
+            for (PostReqDTO.PostCreateReqDTO.ImageDTO image : dto.images()) {
+                if (!redisImageTracker.isOwnedByUser(email, image.imageUrlKey())) {
+                    throw new ImageException(ImageErrorCode.IMAGE_INVALID_FILE_KEY);
+                }
+                redisImageTracker.remove(email, image.imageUrlKey());
+            }
+        }
 
         Post post = PostConverter.toEntity(dto, member);
-
 
         Post saved = postRepository.save(post);
 

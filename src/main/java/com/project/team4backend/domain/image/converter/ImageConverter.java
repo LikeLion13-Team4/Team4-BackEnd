@@ -9,6 +9,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -18,6 +19,9 @@ public class ImageConverter {
                 .presignedUrl(presignedUrl)
                 .fileKey(fileKey)
                 .build();
+    }
+    public static ImageResDTO.PresignedUrlListResDTO toPresignedUrlListResDTO(List<ImageResDTO.PresignedUrlResDTO> urls) {
+        return new ImageResDTO.PresignedUrlListResDTO(urls);
     }
 
     public static ImageInternelDTO.ImageTrackingResDTO toImageTrackingResDTO(String email, String fileKey) {

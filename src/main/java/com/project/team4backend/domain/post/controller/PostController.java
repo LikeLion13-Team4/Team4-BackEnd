@@ -23,6 +23,7 @@ public class PostController {
 
     private final PostCommandService postCommandService;
     private final PostQueryService postQueryService;
+    private final ImageCommandService imageCommandService;
 
     @PostMapping
     @Operation(summary = "게시글 등록", description = "회원이 새로운 게시글을 등록합니다.")
@@ -33,6 +34,15 @@ public class PostController {
         String email = userDetails.getUsername();
         PostResDTO.PostCreateResDTO response = postCommandService.createPost(dto, email);
         return CustomResponse.onSuccess(response);
+    }
+
+    @Operation(method = "POST", summary = "게시글 이미지 업로드", description = "게시글 이미지 선택 api, 업로드 하는건 아님, presignedUrl을 발급")
+    @PostMapping("/postImage")
+    public CustomResponse<ImageResDTO.PresignedUrlListResDTO> uploadPostImages
+            (@AuthenticationPrincipal CustomUserDetails customUserDetails,
+             @RequestBody ImageReqDTO.PresignedUrlListReqDTO presignedUrlListReqDTO) {
+        ImageResDTO.PresignedUrlListResDTO presignedUrlListResDTO = imageCommandService.generatePresignedUrlList(customUserDetails.getEmail(), presignedUrlListReqDTO); // presignedUrl 발급
+        return CustomResponse.onSuccess(presignedUrlListResDTO);
     }
 
 
