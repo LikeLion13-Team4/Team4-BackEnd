@@ -6,8 +6,8 @@ import com.project.team4backend.global.security.JwtUtil;
 import com.project.team4backend.domain.auth.service.RefreshTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,12 +20,19 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @Transactional
-@RequiredArgsConstructor
 public class CustomLogoutHandler implements LogoutHandler {
 
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, String> redisTemplate;
     private final RefreshTokenService refreshTokenService;
+
+    public CustomLogoutHandler(JwtUtil jwtUtil,
+                               RefreshTokenService refreshTokenService,
+                               @Qualifier("tokenRedisTemplate") RedisTemplate<String, String> redisTemplate) {
+        this.jwtUtil = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
+        this.redisTemplate = redisTemplate;
+    }
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
