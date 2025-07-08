@@ -20,9 +20,10 @@ public class ImageConverter {
                 .build();
     }
 
-    public static ImageInternelDTO.ImageTrackingResDTO toImageTrackingResDTO(String fileKey) {
+    public static ImageInternelDTO.ImageTrackingResDTO toImageTrackingResDTO(String email, String fileKey) {
         return ImageInternelDTO.ImageTrackingResDTO.builder()
                 .fileKey(fileKey)
+                .email(email)
                 .createAt(LocalDateTime.now())
                 .build();
     }

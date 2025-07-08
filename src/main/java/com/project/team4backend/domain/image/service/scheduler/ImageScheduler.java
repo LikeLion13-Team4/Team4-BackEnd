@@ -1,4 +1,5 @@
 package com.project.team4backend.domain.image.service.scheduler;
+import com.project.team4backend.domain.image.dto.internel.ImageInternelDTO;
 import com.project.team4backend.domain.image.exception.ImageErrorCode;
 import com.project.team4backend.domain.image.exception.ImageException;
 import com.project.team4backend.domain.image.service.RedisImageTracker;
@@ -29,24 +30,24 @@ public class ImageScheduler {
         try {
             // 1시간 전 이전에 생성된 추적 정보 조회
             LocalDateTime expiredBefore = LocalDateTime.now().minusHours(1);
-            Set<String> expiredFileKeys = redisImageTracker.getExpiredFileKeys(expiredBefore);
+            Set<ImageInternelDTO.ImageTrackingResDTO> expiredImages = redisImageTracker.getExpiredImageEntries(expiredBefore);
 
-            if (expiredFileKeys.isEmpty()) {
+            if (expiredImages.isEmpty()) {
                 log.info("정리할 FileKey가 없습니다.");
                 return;
             }
 
-            log.info("총 {}개의 만료 FileKey 정리 시도", expiredFileKeys.size());
+            log.info("총 {}개의 만료 FileKey 정리 시도", expiredImages.size());
 
             int deletedCount = 0;
             int errorCount = 0;
 
-            for (String fileKey : expiredFileKeys) {
+            for (ImageInternelDTO.ImageTrackingResDTO dto : expiredImages) {
                 try {
-                    imageCommandService.delete(fileKey);
+                    imageCommandService.delete(dto.email(), dto.fileKey());
                     deletedCount++;
                 } catch (Exception e) {
-                    log.error("만료 FileKey 삭제 실패: {}", fileKey, e);
+                    log.error("만료 FileKey 삭제 실패: {}", dto.fileKey(), e);
                     errorCount++;
                 }
             }

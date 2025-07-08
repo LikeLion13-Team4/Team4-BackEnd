@@ -40,13 +40,13 @@ public class ImageCommandServiceImpl implements ImageCommandService {
     private String region;
 
     /**
-     * Presigned URL 발급
+     * Presigned URL 발급 , 프로필 이미지 전용
      * @param "fileExtension" 파일 확장자 (예: jpg, png)
      * @param "contentType" MIME 타입 (예: image/jpeg)
      * @return Presigned URL과 파일 키
      */
     @Override
-    public ImageResDTO.PresignedUrlResDTO generatePresignedUrl(ImageReqDTO.PresignedUrlDTO presignedUrlDTO) {
+    public ImageResDTO.PresignedUrlResDTO generatePresignedUrl(String email, ImageReqDTO.PresignedUrlDTO presignedUrlDTO) {
         validateFileExtension(presignedUrlDTO.fileExtension());
         validateContentType(presignedUrlDTO.contentType());
 
@@ -61,7 +61,7 @@ public class ImageCommandServiceImpl implements ImageCommandService {
             String presignedUrl = presignedRequest.url().toString();
 
             // Redis에 추적 정보 저장
-            redisImageTracker.save(fileKey);
+            redisImageTracker.save(email, fileKey);
 
             return ImageConverter.toPresignedUrlResDTO(presignedUrl,fileKey);
 
@@ -74,7 +74,7 @@ public class ImageCommandServiceImpl implements ImageCommandService {
      * 이미지 사용 확정 (commit)
      */
     @Override
-    public String commit(String fileKey) {
+    public String commit(String email, String fileKey) {
 
         if (fileKey == null || fileKey.trim().isEmpty()) {
             throw new ImageException(ImageErrorCode.IMAGE_KEY_MISSING);
@@ -88,7 +88,7 @@ public class ImageCommandServiceImpl implements ImageCommandService {
             }
 
             // Redis에서 추적 정보 제거 (더 이상 정리 대상이 아님)
-            redisImageTracker.remove(fileKey);
+            redisImageTracker.remove(email, fileKey);
 
             log.info("이미지가 성공적으로 저장되었습니다: {}", fileKey);
         } catch (Exception e) {
@@ -102,7 +102,7 @@ public class ImageCommandServiceImpl implements ImageCommandService {
      * @param fileKey 파일 키
      */
     @Override
-    public void delete(String fileKey) {
+    public void delete(String email, String fileKey) {
         if (fileKey == null || fileKey.trim().isEmpty()) {
             throw new ImageException(ImageErrorCode.IMAGE_KEY_MISSING);
         }
@@ -117,7 +117,7 @@ public class ImageCommandServiceImpl implements ImageCommandService {
             s3Client.deleteObject(deleteRequest);
 
             // Redis에서도 추적 정보 제거
-            redisImageTracker.remove(fileKey);
+            redisImageTracker.remove(email, fileKey);
         } catch (Exception e) {
             throw new ImageException(ImageErrorCode.IMAGE_DELETE_FAIL);
         }

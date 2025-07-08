@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDate;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -37,10 +37,10 @@ public class RedisImageTracker {
     /**
      * Redis에 이미지 추적 정보 저장
      */
-    public void save(String fileKey) {
+    public void save(String email, String fileKey) {
         try {
-            String redisKey = REDIS_KEY_PREFIX + fileKey;
-            ImageInternelDTO.ImageTrackingResDTO imageTrackingResDTO = ImageConverter.toImageTrackingResDTO(fileKey);
+            String redisKey = REDIS_KEY_PREFIX + email + ":" + fileKey;
+            ImageInternelDTO.ImageTrackingResDTO imageTrackingResDTO = ImageConverter.toImageTrackingResDTO(email, fileKey);
 
             imageRedisTemplate.opsForValue().set(redisKey, imageTrackingResDTO, TRACKING_DURATION_HOURS, TimeUnit.HOURS);
 
@@ -52,9 +52,9 @@ public class RedisImageTracker {
     /**
      * Redis에서 이미지 추적 정보 제거
      */
-    public void remove(String fileKey) {
+    public void remove(String email, String fileKey) {
         try {
-            String redisKey = REDIS_KEY_PREFIX + fileKey;
+            String redisKey = REDIS_KEY_PREFIX + email + ":" + fileKey;
             imageRedisTemplate.delete(redisKey);
         } catch (Exception e) {
             throw new ImageException(ImageErrorCode.REDIS_REMOVE_FAIL);
@@ -79,28 +79,30 @@ public class RedisImageTracker {
     /**
      * 특정 시간 이전의 추적 정보 조회
      */
-    public Set<String> getExpiredFileKeys(LocalDateTime expiredBefore) {
-        try {
-            Set<String> allKeys = getAllTrackedFileKeys();
-            return allKeys.stream()
-                    .filter(fileKey -> {
-                        try {
-                            String redisKey = REDIS_KEY_PREFIX + fileKey;
-                            Object raw = imageRedisTemplate.opsForValue().get(redisKey);
-                            if (raw == null) return false;
+    public Set<ImageInternelDTO.ImageTrackingResDTO> getExpiredImageEntries(LocalDateTime expiredBefore) {
+        Set<String> redisKeys = imageRedisTemplate.keys(REDIS_KEY_PREFIX + "*");
+        Set<ImageInternelDTO.ImageTrackingResDTO> expiredEntries = new HashSet<>();
 
-                            ImageInternelDTO.ImageTrackingResDTO info = objectMapper.convertValue(raw, ImageInternelDTO.ImageTrackingResDTO.class);
+        for (String redisKey : redisKeys) {
+            try {
+                Object raw = imageRedisTemplate.opsForValue().get(redisKey);
+                ImageInternelDTO.ImageTrackingResDTO dto = objectMapper.convertValue(raw, ImageInternelDTO.ImageTrackingResDTO.class);
 
-                            return info != null && info.createAt().isBefore(expiredBefore);
-                        } catch (Exception e) {
-                            log.warn("fileKey 만료 확인 중 에러 발생: {}", fileKey, e);
-                            return false;
-                        }
-                    })
-                    .collect(java.util.stream.Collectors.toSet());
-
-        } catch (Exception e) {
-            throw new ImageException(ImageErrorCode.REDIS_EXPIRED_FETCH_FAIL);
+                if (dto.createAt().isBefore(expiredBefore)) {
+                    expiredEntries.add(dto);
+                }
+            } catch (Exception e) {
+                log.warn("만료 여부 확인 실패: {}", redisKey, e);
+            }
         }
+
+        return expiredEntries;
+    }
+    /**
+     * fileKey의 주인 찾기
+     */
+    public boolean isOwnedByUser(String email, String fileKey) {
+        String redisKey = REDIS_KEY_PREFIX + email + ":" + fileKey;
+        return imageRedisTemplate.hasKey(redisKey);
     }
 }
