@@ -49,25 +49,24 @@ public class PostController {
 
     @PutMapping("/{postId}")
     @Operation(summary = "게시글 수정", description = "본인이 작성한 게시글을 수정합니다.")
-    public CustomResponse<Void> updatePost(
+    public CustomResponse<PostResDTO.PostUpdateResDTO> updatePost(
             @PathVariable Long postId,
             @RequestBody @Valid PostReqDTO.PostUpdateReqDTO dto,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         String email = userDetails.getUsername();
-        postCommandService.updatePost(postId, dto, email);
-        return CustomResponse.onSuccess(null);
+        PostResDTO.PostUpdateResDTO postUpdateResDTO = postCommandService.updatePost(postId, dto, email);
+        return CustomResponse.onSuccess(postUpdateResDTO);
     }
 
     @DeleteMapping("/{postId}")
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
-    public CustomResponse<Void> deletePost(
+    public CustomResponse<PostResDTO.PostDeleteResDTO> deletePost(
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetails userDetails) {
 
         String email = userDetails.getUsername();
-        postCommandService.deletePost(postId, email);
-
-        return CustomResponse.onSuccess(null);
+        PostResDTO.PostDeleteResDTO postDeleteResDTO = postCommandService.deletePost(postId, email);
+        return CustomResponse.onSuccess(postDeleteResDTO);
     }
 }
