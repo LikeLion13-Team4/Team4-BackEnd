@@ -67,7 +67,7 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostResDTO.PostSimpleDTO toPostSimpleDTO(Post post) {
+    public static PostResDTO.PostSimpleDTO toPostSimpleDTO(Post post,int likeCount, int scrapCount, int commentCount) {
         String preview = post.getContent().length() > 100
                 ? post.getContent().substring(0, 100) + "..."
                 : post.getContent(); //100자 초과하면 ...처리
@@ -81,6 +81,9 @@ public class PostConverter {
                 .thumbnailImageUrl(
                         post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl()
                 )
+                .likeCount(likeCount)
+                .scrapCount(scrapCount)
+                .commentCount(commentCount)
                 .createdAt(post.getCreatedAt())
                 .build();
     }

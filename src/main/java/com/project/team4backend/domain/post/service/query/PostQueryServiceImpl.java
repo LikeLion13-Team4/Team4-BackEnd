@@ -51,8 +51,14 @@ public class PostQueryServiceImpl implements PostQueryService {
     @Override
     public PostResDTO.PostPageResDTO getAllPosts(Pageable pageable) {
         Page<Post> postPage = postRepository.findAllByOrderByPostIdDesc(pageable);
+
         List<PostResDTO.PostSimpleDTO> posts = postPage.getContent().stream()
-                .map(PostConverter::toPostSimpleDTO)
+                .map(post -> {
+                    int likeCount = postLikeRepository.countByPost(post);
+                    int scrapCount = postScrapRepository.countByPost(post);
+                    int commentCount = post.getComments().size();
+                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
+                })
                 .toList();
 
         return PostConverter.toPostPageDTO(postPage, posts);

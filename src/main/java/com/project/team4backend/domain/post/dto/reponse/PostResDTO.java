@@ -55,6 +55,9 @@ public class PostResDTO {
             String authorNickname,
             Set<PostTagType> tags,
             String thumbnailImageUrl,
+            int likeCount,
+            int scrapCount,
+            int commentCount,
             LocalDateTime createdAt
     ) {}
 
