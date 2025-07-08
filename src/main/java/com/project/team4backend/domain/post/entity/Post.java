@@ -77,24 +77,17 @@ public class Post extends BaseEntity {
 
     public void addImage(PostImage image) {
         this.images.add(image);
-        image.setPost(this); // 양쪽 다 맞춰줌 양방향 동기화 매서드
+        image.updatePost(this); // 양쪽 다 맞춰줌 양방향 동기화 매서드
     }
 
-    public void update(String title, String content, Set<PostTagType> tags, List<PostReqDTO.PostUpdateReqDTO.ImageDTO> imageDTOs) {
+    public void update(String title, String content, Set<PostTagType> tags, List<PostImage> newImages) {
         this.title = title;
         this.content = content;
         this.tags = tags;
 
         this.images.clear();
-        if (imageDTOs != null) {
-            imageDTOs.forEach(dto -> {
-                PostImage image = PostImage.builder()
-                        .imageUrl(dto.imageUrl())
-                        .imageUrlKey(dto.imageUrlKey())
-                        .post(this) // 연관관계 설정
-                        .build();
-                this.images.add(image);
-            });
+        if (newImages != null) {
+            newImages.forEach(this::addImage); // 양방향 연관관계 유지
         }
     }
 }

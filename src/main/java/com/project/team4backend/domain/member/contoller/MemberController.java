@@ -1,5 +1,11 @@
 package com.project.team4backend.domain.member.contoller;
 
+import com.project.team4backend.domain.image.dto.request.ImageReqDTO;
+import com.project.team4backend.domain.image.dto.response.ImageResDTO;
+import com.project.team4backend.domain.image.exception.ImageErrorCode;
+import com.project.team4backend.domain.image.exception.ImageException;
+import com.project.team4backend.domain.image.service.RedisImageTracker;
+import com.project.team4backend.domain.image.service.command.ImageCommandService;
 import com.project.team4backend.domain.member.dto.request.MemberReqDTO;
 import com.project.team4backend.domain.member.dto.response.MemberResDTO;
 import com.project.team4backend.domain.member.service.command.MemberCommandService;
@@ -21,6 +27,42 @@ public class MemberController {
 
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
+    private final ImageCommandService imageCommandService;
+    private final RedisImageTracker redisImageTracker;
+
+    @Operation(method = "POST", summary = "프로필 이미지 업로드1", description = "프로필 이미지 선택 api, 업로드 하는건 아님")
+    @PostMapping("/profile-image1")
+    public CustomResponse<ImageResDTO.PresignedUrlResDTO> uploadProfileImages
+            (@AuthenticationPrincipal CustomUserDetails customUserDetails,
+             @RequestBody ImageReqDTO.PresignedUrlReqDTO presignedUrlDTO) {
+        ImageResDTO.PresignedUrlResDTO presignedUrlResDTO = imageCommandService.generatePresignedUrl(customUserDetails.getEmail(), presignedUrlDTO); // presignedUrl 발급
+        return CustomResponse.onSuccess(presignedUrlResDTO);
+    }
+
+    @Operation(method = "POST", summary = "프로필 이미지 업로드2", description = "선택한 프로필 이미지 저장 api, 이때 업로드")
+    @PostMapping("/profile-image2")
+    public CustomResponse<ImageResDTO.SaveImageResDTO> saveProfileImages(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestBody ImageReqDTO.SaveImageReqDTO saveImageReqDTO) {
+
+        String email = customUserDetails.getEmail();
+        String fileKey = saveImageReqDTO.fileKey();
+
+        if (!redisImageTracker.isOwnedByUser(email, fileKey)) {
+            throw new ImageException(ImageErrorCode.IMAGE_INVALID_FILE_KEY);
+        }
+        // 실제 imageUrl 만들기 + Redis 제거
+        String imageUrl = imageCommandService.commit(email, fileKey);
+        return CustomResponse.onSuccess(memberCommandService.uploadProfileImage(email, fileKey, imageUrl));
+    }
+
+    @Operation(method = "GET", summary = "회원 정보 조회", description = "회원 정보 조회 api입니다.")
+    @GetMapping
+    public CustomResponse<MemberResDTO.MemberPreviewResDTO> getMember(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        return CustomResponse.onSuccess(memberQueryService.getMemberPreview(customUserDetails.getEmail()));
+    }
 
     @Operation(method = "PATCH", summary = "계정 정보 수정", description = "회원 정보 수정 api입니다.")
     @PatchMapping("/body")
@@ -40,15 +82,6 @@ public class MemberController {
         return CustomResponse.onSuccess(memberCommandService.updateMemberBody(customUserDetails.getEmail(), memberBodyUpdateReqDTO));
     }
 
-
-    @Operation(method = "GET", summary = "회원 정보 조회", description = "회원 정보 조회 api입니다.")
-    @GetMapping
-    public CustomResponse<MemberResDTO.MemberPreviewResDTO> getMember(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ) {
-        return CustomResponse.onSuccess(memberQueryService.getMemberPreview(customUserDetails.getEmail()));
-    }
-
     @Operation(method = "DELETE", summary = "회원 탈퇴", description = "회원 탈퇴 작동 시 해당 유저의 is_deleted = true로 바뀜")
     @DeleteMapping
     public CustomResponse<String> deleteMember(
@@ -56,6 +89,15 @@ public class MemberController {
     ) {
         memberCommandService.deleteMember(customUserDetails.getEmail());
         return CustomResponse.onSuccess("회원정보가 삭제되었습니다.");
+    }
+
+    @Operation(method = "DELETE", summary = "프로필 이미지 삭제", description = "프로필 이미지 삭제 api입니다.")
+    @DeleteMapping("/profile-image")
+    public CustomResponse<String> deleteProfileImage(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        memberCommandService.deleteProfileImage(customUserDetails.getEmail());
+        return CustomResponse.onSuccess("프로필 이미지가 삭제되었습니다.");
     }
 
 }

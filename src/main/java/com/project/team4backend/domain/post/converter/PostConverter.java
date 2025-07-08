@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
+import java.util.List;
+
 public class PostConverter {
     public static Post toEntity(PostReqDTO.PostCreateReqDTO req, Member member) {
         Post post = Post.builder()
@@ -53,6 +55,26 @@ public class PostConverter {
                 .createdAt(post.getCreatedAt())
                 .build();
     }
+
+    public static PostResDTO.PostCreateResDTO toCreateDTO(Post post) {
+        return PostResDTO.PostCreateResDTO.builder()
+                .postId(post.getPostId())
+                .message("게시글이 등록되었습니다.")
+                .build();
+    }
+
+    public static List<PostImage> toImageEntities(List<PostReqDTO.PostUpdateReqDTO.ImageDTO> imageDTOs, Post post) {
+        if (imageDTOs == null) return List.of();
+
+        return imageDTOs.stream()
+                .map(dto -> PostImage.builder()
+                        .imageUrl(dto.imageUrl())
+                        .imageUrlKey(dto.imageUrlKey())
+                        .post(post)
+                        .build())
+                .toList();
+    }
+
     public static PostResDTO.PostUpdateResDTO toUpdateDTO(Post post) {
         return PostResDTO.PostUpdateResDTO.builder()
                 .postId(post.getPostId())

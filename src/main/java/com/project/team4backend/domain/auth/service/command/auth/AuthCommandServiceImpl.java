@@ -43,15 +43,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     public AuthResDTO.SignUpResDTO signUp(AuthReqDTO.SignupReqDTO signupReqDTO, EmailVerification emailVerification) {
+        if (memberRepository.existsByEmailAndIsDeletedFalse(signupReqDTO.email())) {
+            throw new CustomException(MemberErrorCode.MEMBER_EMAIL_DUPLICATE);
+        }
+
         // Member 생성
         Member member = MemberConverter.toMember(signupReqDTO);
 
-        // Member 엔티티 DB에 저장
-        try {
-            memberRepository.save(member);
-        } catch (DataIntegrityViolationException e) {
-            throw new CustomException(MemberErrorCode.MEMBER_EMAIL_DUPLICATE);
-        }
+        // Member 저장
+        memberRepository.save(member);
 
         String password = signupReqDTO.password();
         String encodedPassword = null;
