@@ -44,7 +44,7 @@ aws:
     secret-key: ${AWS_SECRET_KEY}
     region: ${AWS_REGION}
     bucket-name: ${AWS_S3_BUCKET}
-    presigned-url-duration: 10
+    presigned-url-duration: 15
 
 gpt.model: gpt-4.1-nano
 gpt.api.key: ${GPT_API_KEY}

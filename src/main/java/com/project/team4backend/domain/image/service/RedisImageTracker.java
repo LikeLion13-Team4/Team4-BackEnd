@@ -91,9 +91,9 @@ public class RedisImageTracker {
 
                             ImageInternelDTO.ImageTrackingResDTO info = objectMapper.convertValue(raw, ImageInternelDTO.ImageTrackingResDTO.class);
 
-                            return info != null && info.createAt().isBefore(ChronoLocalDate.from(expiredBefore));
+                            return info != null && info.createAt().isBefore(expiredBefore);
                         } catch (Exception e) {
-                            log.warn("Error checking expiration for fileKey: {}", fileKey, e);
+                            log.warn("fileKey 만료 확인 중 에러 발생: {}", fileKey, e);
                             return false;
                         }
                     })

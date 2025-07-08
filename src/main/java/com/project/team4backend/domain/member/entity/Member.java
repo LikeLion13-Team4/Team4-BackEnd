@@ -45,7 +45,7 @@ public class Member extends BaseEntity {
     }
 
     public void saveImage(String ImageUrl) {
-        this.profileImageKey = ImageUrl;
+        this.profileImageUrl = ImageUrl;
     }
 
     @Id

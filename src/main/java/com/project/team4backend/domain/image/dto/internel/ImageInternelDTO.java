@@ -2,12 +2,12 @@ package com.project.team4backend.domain.image.dto.internel;
 
 import lombok.Builder;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ImageInternelDTO {
     @Builder
     public record ImageTrackingResDTO (
             String fileKey,
-            LocalDate createAt
+            LocalDateTime createAt
     ){}
 }

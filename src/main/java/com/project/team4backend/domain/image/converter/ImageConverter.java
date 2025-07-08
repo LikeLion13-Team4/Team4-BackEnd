@@ -8,7 +8,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -23,7 +23,7 @@ public class ImageConverter {
     public static ImageInternelDTO.ImageTrackingResDTO toImageTrackingResDTO(String fileKey) {
         return ImageInternelDTO.ImageTrackingResDTO.builder()
                 .fileKey(fileKey)
-                .createAt(LocalDate.now())
+                .createAt(LocalDateTime.now())
                 .build();
     }
 

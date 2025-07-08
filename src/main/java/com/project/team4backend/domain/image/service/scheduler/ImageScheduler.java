@@ -36,7 +36,7 @@ public class ImageScheduler {
                 return;
             }
 
-            log.info("총 {}개의 만료 이미지 정리 시도", expiredFileKeys.size());
+            log.info("총 {}개의 만료 FileKey 정리 시도", expiredFileKeys.size());
 
             int deletedCount = 0;
             int errorCount = 0;
@@ -46,15 +46,15 @@ public class ImageScheduler {
                     imageCommandService.delete(fileKey);
                     deletedCount++;
                 } catch (Exception e) {
-                    log.error("만료 이미지 삭제 실패: {}", fileKey, e);
+                    log.error("만료 FileKey 삭제 실패: {}", fileKey, e);
                     errorCount++;
                 }
             }
 
-            log.info("이미시 삭제 완료 - 삭제: {}, 에러: {}", deletedCount, errorCount);
+            log.info("FileKey 삭제 완료 - 삭제: {}, 에러: {}", deletedCount, errorCount);
 
         } catch (Exception e) {
-            log.error("만료 이미지 키 조회 실패", e);
+            log.error("만료 FileKey 조회 실패", e);
             throw new ImageException(ImageErrorCode.REDIS_EXPIRED_FETCH_FAIL);
 
         }
