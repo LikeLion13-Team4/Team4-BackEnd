@@ -7,4 +7,6 @@ public interface PostQueryService {
     PostResDTO.PostDetailResDTO getPostDetail(Long postId, String email);
 
     PostResDTO.PostPageResDTO getAllPosts(Pageable pageable);
+
+    PostResDTO.PostPageResDTO getScrappedPosts(Pageable pageable, String email);
 }

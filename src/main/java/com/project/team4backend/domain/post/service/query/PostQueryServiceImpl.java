@@ -7,11 +7,13 @@ import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.domain.post.converter.PostConverter;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.entity.Post;
+import com.project.team4backend.domain.post.entity.PostScrap;
 import com.project.team4backend.domain.post.exception.PostErrorCode;
 import com.project.team4backend.domain.post.exception.PostException;
 import com.project.team4backend.domain.post.repository.PostLikeRepository;
 import com.project.team4backend.domain.post.repository.PostRepository;
 import com.project.team4backend.domain.post.repository.PostScrapRepository;
+import com.project.team4backend.global.apiPayload.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -65,5 +67,26 @@ public class PostQueryServiceImpl implements PostQueryService {
                 .toList();
 
         return PostConverter.toPostPageDTO(postPage, posts);
+    }
+
+    @Override
+    public PostResDTO.PostPageResDTO getScrappedPosts(Pageable pageable, String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(PostErrorCode.MEMBER_NOT_FOUND));
+
+        Page<PostScrap> scrapPage = postScrapRepository.findByMember(member, pageable);
+        List<PostResDTO.PostSimpleDTO> postDTOs = scrapPage.getContent().stream()
+                .map(scrap -> {
+                    Post post = scrap.getPost();
+                    int likeCount = postLikeRepository.countByPost(post);
+                    int scrapCount = postScrapRepository.countByPost(post);
+                    int commentCount = post.getComments().size();
+
+
+                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
+                })
+                .toList();
+
+        return PostConverter.toPostPageDTO(scrapPage.map(PostScrap::getPost), postDTOs);
     }
 }

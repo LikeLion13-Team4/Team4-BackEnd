@@ -74,6 +74,18 @@ public class PostController {
         return CustomResponse.onSuccess(postQueryService.getAllPosts(pageable));
     }
 
+    @GetMapping("/scraps")
+    @Operation(summary = "내가 스크랩한 게시글 조회 (페이지네이션)", description = "로그인한 사용자가 스크랩한 게시글을 페이지네이션으로 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getMyScrapPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String email = userDetails.getUsername();
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return CustomResponse.onSuccess(postQueryService.getScrappedPosts(pageable, email));
+    }
+
     @PutMapping("/{postId}")
     @Operation(summary = "게시글 수정", description = "본인이 작성한 게시글을 수정합니다.")
     public CustomResponse<PostResDTO.PostUpdateResDTO> updatePost(
