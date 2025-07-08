@@ -89,4 +89,13 @@ public class MemberController {
         return CustomResponse.onSuccess("회원정보가 삭제되었습니다.");
     }
 
+    @Operation(method = "DELETE", summary = "프로필 이미지 삭제", description = "프로필 이미지 삭제 api입니다.")
+    @DeleteMapping("/profile-image")
+    public CustomResponse<String> deleteProfileImage(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        memberCommandService.deleteProfileImage(customUserDetails.getEmail());
+        return CustomResponse.onSuccess("프로필 이미지가 삭제되었습니다.");
+    }
+
 }

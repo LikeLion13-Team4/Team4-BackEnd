@@ -7,6 +7,7 @@ import com.project.team4backend.domain.auth.repository.AuthRepository;
 import com.project.team4backend.domain.image.converter.ImageConverter;
 import com.project.team4backend.domain.image.dto.request.ImageReqDTO;
 import com.project.team4backend.domain.image.dto.response.ImageResDTO;
+import com.project.team4backend.domain.image.service.command.ImageCommandService;
 import com.project.team4backend.domain.member.dto.request.MemberReqDTO;
 import com.project.team4backend.domain.member.entity.Member;
 import com.project.team4backend.domain.member.exception.MemberErrorCode;
@@ -25,6 +26,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     private final MemberRepository memberRepository;
     private final AuthRepository authRepository;
+
+    private final ImageCommandService imageCommandService;
 
     //프로필 이미지 업로드1(이미지 선택)
     @Override
@@ -72,5 +75,16 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         member.deleteMember();
         auth.deleteAuth();
+    }
+    @Override
+    public void deleteProfileImage(String email){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(()-> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        String fileKey = member.getProfileImageKey();
+
+        imageCommandService.delete(fileKey);
+
+        member.deleteProfileImage();
     }
 }

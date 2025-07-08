@@ -48,6 +48,12 @@ public class Member extends BaseEntity {
         this.profileImageUrl = ImageUrl;
     }
 
+    public void deleteProfileImage() {
+        this.profileImageUrl = null;
+        this.profileImageKey = null;
+    }
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

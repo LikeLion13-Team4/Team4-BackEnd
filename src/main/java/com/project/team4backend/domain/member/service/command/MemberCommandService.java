@@ -15,4 +15,6 @@ public interface MemberCommandService {
     String updateMemberBody(String email, MemberReqDTO.MemberBodyUpdateReqDTO memberBodyUpdateReqDTO);
 
     void deleteMember(String email);
+
+    void deleteProfileImage(String email);
 }
