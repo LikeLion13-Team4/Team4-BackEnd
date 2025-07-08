@@ -5,6 +5,9 @@ import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.dto.request.PostReqDTO;
 import com.project.team4backend.domain.post.entity.Post;
 import com.project.team4backend.domain.post.entity.PostImage;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 import java.util.List;
 
@@ -85,4 +88,43 @@ public class PostConverter {
                 .message("게시글이 삭제되었습니다.")
                 .build();
     }
+
+    public static PostResDTO.PostSimpleDTO toPostSimpleDTO(Post post,int likeCount, int scrapCount, int commentCount) {
+        String preview = post.getContent().length() > 100
+                ? post.getContent().substring(0, 100) + "..."
+                : post.getContent(); //100자 초과하면 ...처리
+
+        return PostResDTO.PostSimpleDTO.builder()
+                .postId(post.getPostId())
+                .title(post.getTitle())
+                .content(preview)
+                .authorNickname(post.getMember().getNickname())
+                .tags(post.getTags())
+                .thumbnailImageUrl(
+                        post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl()
+                )
+                .likeCount(likeCount)
+                .scrapCount(scrapCount)
+                .commentCount(commentCount)
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
+
+    public static PostResDTO.PostPageResDTO toPostPageDTO(Page<Post> postPage, List<PostResDTO.PostSimpleDTO> posts) {
+        return PostResDTO.PostPageResDTO.builder()
+                .posts(posts)
+                .currentPage(postPage.getNumber() + 1) // 1부터 시작
+                .totalPages(postPage.getTotalPages())
+                .totalElements(postPage.getTotalElements())
+                .isLast(postPage.isLast())
+                .build();
+    }
+
+    public static PostResDTO.ToggleResDTO toToggleDTO(boolean isToggled, int count) {
+        return PostResDTO.ToggleResDTO.builder()
+                .toggled(isToggled)
+                .count(count)
+                .build();
+    }
+
 }

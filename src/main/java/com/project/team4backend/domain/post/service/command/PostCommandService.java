@@ -13,4 +13,9 @@ public interface PostCommandService {
     PostResDTO.PostUpdateResDTO updatePost(Long postId, PostReqDTO.PostUpdateReqDTO dto, String email);
 
     PostResDTO.PostDeleteResDTO deletePost(Long postId, String email);
+
+
+    PostResDTO.ToggleResDTO toggleLike(Long postId, String email);
+
+    PostResDTO.ToggleResDTO toggleScrap(Long postId, String email);
 }

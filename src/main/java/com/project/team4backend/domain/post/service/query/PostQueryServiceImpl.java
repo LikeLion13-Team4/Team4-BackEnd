@@ -13,8 +13,12 @@ import com.project.team4backend.domain.post.repository.PostLikeRepository;
 import com.project.team4backend.domain.post.repository.PostRepository;
 import com.project.team4backend.domain.post.repository.PostScrapRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -29,19 +33,37 @@ public class PostQueryServiceImpl implements PostQueryService {
     @Override
     public PostResDTO.PostDetailResDTO getPostDetail(Long postId, String email) {
         Member member = memberRepository.findByEmail(email)
+
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
+      
 
         boolean liked = postLikeRepository.existsByPostAndMember(post, member);
         boolean scrapped = postScrapRepository.existsByPostAndMember(post, member);
 
         int likeCount = postLikeRepository.countByPost(post);
         int scrapCount = postScrapRepository.countByPost(post);
-        int commentCount = post.getComments().size(); // 연관관계에 comments 있음
+        int commentCount = post.getComments().size();
 
         return PostConverter.toDetailDTO(post, member, liked, scrapped, likeCount, scrapCount, commentCount);
 
+    }
+
+    @Override
+    public PostResDTO.PostPageResDTO getAllPosts(Pageable pageable) {
+        Page<Post> postPage = postRepository.findAllByOrderByPostIdDesc(pageable);
+
+        List<PostResDTO.PostSimpleDTO> posts = postPage.getContent().stream()
+                .map(post -> {
+                    int likeCount = postLikeRepository.countByPost(post);
+                    int scrapCount = postScrapRepository.countByPost(post);
+                    int commentCount = post.getComments().size();
+                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
+                })
+                .toList();
+
+        return PostConverter.toPostPageDTO(postPage, posts);
     }
 }
