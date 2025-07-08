@@ -14,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -24,6 +22,15 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     private final MemberRepository memberRepository;
     private final AuthRepository authRepository;
+
+    //프로필 이미지 업로드1(이미지 선택)
+    @Override
+    public void selectProfileImage(String email, String fileKey){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(()-> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        member.selectImage(fileKey);
+    }
 
     // 계정 정보 수정
     @Override

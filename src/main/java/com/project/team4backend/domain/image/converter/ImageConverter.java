@@ -1,9 +1,46 @@
 package com.project.team4backend.domain.image.converter;
 
+import com.project.team4backend.domain.image.dto.internel.ImageInternelDTO;
+import com.project.team4backend.domain.image.dto.response.ImageResDTO;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+
+import java.time.Duration;
+import java.time.LocalDate;
+
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ImageConverter {
+    public static ImageResDTO.PresignedUrlResDTO toPresignedUrlResDTO(String presignedUrl, String fileKey) {
+        return ImageResDTO.PresignedUrlResDTO.builder()
+                .presignedUrl(presignedUrl)
+                .fileKey(fileKey)
+                .build();
+    }
+
+    public static ImageInternelDTO.ImageTrackingResDTO toImageTrackingResDTO(String fileKey) {
+        return ImageInternelDTO.ImageTrackingResDTO.builder()
+                .fileKey(fileKey)
+                .createAt(LocalDate.now())
+                .build();
+    }
+
+    public static PutObjectRequest toPutObjectRequest(String bucketName, String fileKey, String contentType) {
+        return PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(fileKey)
+                .contentType(contentType)
+                .build();
+    }
+
+    public static PutObjectPresignRequest toPutObjectPresignRequest(Duration presignedUrlDurationMinutes, PutObjectRequest putObjectRequest) {
+        return PutObjectPresignRequest.builder()
+                .signatureDuration(presignedUrlDurationMinutes)
+                .putObjectRequest(putObjectRequest)
+                .build();
+    }
+
 
 }

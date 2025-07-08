@@ -21,6 +21,27 @@ public class MemberController {
 
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
+    private final ImageCommandService imageCommandService;
+    private final MemberRepository memberRepository;
+
+    @Operation(method = "POST", summary = "프로필 이미지 업로드1", description = "프로필 이미지 선택 api, 업로드 하는건 아님")
+    @PostMapping("/profile-image1")
+    public CustomResponse<ImageResDTO.PresignedUrlResDTO> uploadProfileImages
+            (@AuthenticationPrincipal CustomUserDetails customUserDetails,
+             @RequestBody ImageReqDTO.PresignedUrlDTO presignedUrlDTO) {
+        ImageResDTO.PresignedUrlResDTO presignedUrlResDTO = imageCommandService.generatePresignedUrl(presignedUrlDTO); // presignedUrl 발급
+
+        memberCommandService.selectProfileImage(customUserDetails.getEmail(), presignedUrlResDTO.fileKey()); // member의 profileImageKey에 fileKey 저장
+        return CustomResponse.onSuccess(presignedUrlResDTO);
+    }
+
+    @Operation(method = "GET", summary = "회원 정보 조회", description = "회원 정보 조회 api입니다.")
+    @GetMapping
+    public CustomResponse<MemberResDTO.MemberPreviewResDTO> getMember(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        return CustomResponse.onSuccess(memberQueryService.getMemberPreview(customUserDetails.getEmail()));
+    }
 
     @Operation(method = "PATCH", summary = "계정 정보 수정", description = "회원 정보 수정 api입니다.")
     @PatchMapping("/body")
@@ -38,15 +59,6 @@ public class MemberController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
         return CustomResponse.onSuccess(memberCommandService.updateMemberBody(customUserDetails.getEmail(), memberBodyUpdateReqDTO));
-    }
-
-
-    @Operation(method = "GET", summary = "회원 정보 조회", description = "회원 정보 조회 api입니다.")
-    @GetMapping
-    public CustomResponse<MemberResDTO.MemberPreviewResDTO> getMember(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ) {
-        return CustomResponse.onSuccess(memberQueryService.getMemberPreview(customUserDetails.getEmail()));
     }
 
     @Operation(method = "DELETE", summary = "회원 탈퇴", description = "회원 탈퇴 작동 시 해당 유저의 is_deleted = true로 바뀜")
