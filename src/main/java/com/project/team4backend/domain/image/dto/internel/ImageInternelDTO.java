@@ -8,6 +8,7 @@ public class ImageInternelDTO {
     @Builder
     public record ImageTrackingResDTO (
             String fileKey,
+            String email,
             LocalDateTime createAt
     ){}
 }

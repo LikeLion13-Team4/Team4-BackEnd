@@ -40,12 +40,9 @@ public class Member extends BaseEntity {
         this.isDeleted = true;
     }
 
-    public void selectImage(String fileKey) {
+    public void saveImage(String imageUrl, String fileKey) {
+        this.profileImageUrl = imageUrl;
         this.profileImageKey = fileKey;
-    }
-
-    public void saveImage(String ImageUrl) {
-        this.profileImageUrl = ImageUrl;
     }
 
     public void deleteProfileImage() {

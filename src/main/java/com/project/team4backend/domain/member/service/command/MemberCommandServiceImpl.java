@@ -5,8 +5,8 @@ import com.project.team4backend.domain.auth.exception.auth.AuthErrorCode;
 import com.project.team4backend.domain.auth.exception.auth.AuthException;
 import com.project.team4backend.domain.auth.repository.AuthRepository;
 import com.project.team4backend.domain.image.converter.ImageConverter;
-import com.project.team4backend.domain.image.dto.request.ImageReqDTO;
 import com.project.team4backend.domain.image.dto.response.ImageResDTO;
+import com.project.team4backend.domain.image.service.RedisImageTracker;
 import com.project.team4backend.domain.image.service.command.ImageCommandService;
 import com.project.team4backend.domain.member.dto.request.MemberReqDTO;
 import com.project.team4backend.domain.member.entity.Member;
@@ -28,20 +28,19 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final AuthRepository authRepository;
 
     private final ImageCommandService imageCommandService;
+    private final RedisImageTracker redisImageTracker;
 
-    //프로필 이미지 업로드1(이미지 선택)
+    //프로필 이미지 업로드
     @Override
-    public void selectProfileImage(String email, String fileKey){
+    public ImageResDTO.SaveImageResDTO uploadProfileImage(String email, String fileKey, String imageUrl){
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(()-> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        member.selectImage(fileKey);
-    }
+        member.saveImage(imageUrl, fileKey);
 
-    //프로필 이미지 업로드2(이미지 저장)
-    @Override
-    public ImageResDTO.SaveImageResDTO saveProfileImage(Member member, String fileKey, String imageUrl, ImageReqDTO.SaveImageReqDTO saveImageReqDTO){
-        member.saveImage(imageUrl);
+        // 커밋 처리: Redis에서 제거
+        redisImageTracker.remove(email, fileKey);
+
         return ImageConverter.toSaveImageResDTO(imageUrl);
     }
 
@@ -83,7 +82,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         String fileKey = member.getProfileImageKey();
 
-        imageCommandService.delete(fileKey);
+        imageCommandService.delete(email, fileKey);
 
         member.deleteProfileImage();
     }

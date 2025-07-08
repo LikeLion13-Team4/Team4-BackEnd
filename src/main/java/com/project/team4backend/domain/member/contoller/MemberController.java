@@ -2,13 +2,12 @@ package com.project.team4backend.domain.member.contoller;
 
 import com.project.team4backend.domain.image.dto.request.ImageReqDTO;
 import com.project.team4backend.domain.image.dto.response.ImageResDTO;
+import com.project.team4backend.domain.image.exception.ImageErrorCode;
+import com.project.team4backend.domain.image.exception.ImageException;
+import com.project.team4backend.domain.image.service.RedisImageTracker;
 import com.project.team4backend.domain.image.service.command.ImageCommandService;
 import com.project.team4backend.domain.member.dto.request.MemberReqDTO;
 import com.project.team4backend.domain.member.dto.response.MemberResDTO;
-import com.project.team4backend.domain.member.entity.Member;
-import com.project.team4backend.domain.member.exception.MemberErrorCode;
-import com.project.team4backend.domain.member.exception.MemberException;
-import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.domain.member.service.command.MemberCommandService;
 import com.project.team4backend.domain.member.service.query.MemberQueryService;
 import com.project.team4backend.global.apiPayload.CustomResponse;
@@ -29,16 +28,14 @@ public class MemberController {
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
     private final ImageCommandService imageCommandService;
-    private final MemberRepository memberRepository;
+    private final RedisImageTracker redisImageTracker;
 
     @Operation(method = "POST", summary = "프로필 이미지 업로드1", description = "프로필 이미지 선택 api, 업로드 하는건 아님")
     @PostMapping("/profile-image1")
     public CustomResponse<ImageResDTO.PresignedUrlResDTO> uploadProfileImages
             (@AuthenticationPrincipal CustomUserDetails customUserDetails,
-             @RequestBody ImageReqDTO.PresignedUrlDTO presignedUrlDTO) {
-        ImageResDTO.PresignedUrlResDTO presignedUrlResDTO = imageCommandService.generatePresignedUrl(presignedUrlDTO); // presignedUrl 발급
-
-        memberCommandService.selectProfileImage(customUserDetails.getEmail(), presignedUrlResDTO.fileKey()); // member의 profileImageKey에 fileKey 저장
+             @RequestBody ImageReqDTO.PresignedUrlReqDTO presignedUrlDTO) {
+        ImageResDTO.PresignedUrlResDTO presignedUrlResDTO = imageCommandService.generatePresignedUrl(customUserDetails.getEmail(), presignedUrlDTO); // presignedUrl 발급
         return CustomResponse.onSuccess(presignedUrlResDTO);
     }
 
@@ -48,10 +45,15 @@ public class MemberController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestBody ImageReqDTO.SaveImageReqDTO saveImageReqDTO) {
 
-        Member member = memberRepository.findByEmail(customUserDetails.getEmail())
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
-        String fileKey = member.getProfileImageKey();
-        return CustomResponse.onSuccess(memberCommandService.saveProfileImage(member, fileKey, imageCommandService.commit(fileKey), saveImageReqDTO));
+        String email = customUserDetails.getEmail();
+        String fileKey = saveImageReqDTO.fileKey();
+
+        if (!redisImageTracker.isOwnedByUser(email, fileKey)) {
+            throw new ImageException(ImageErrorCode.IMAGE_INVALID_FILE_KEY);
+        }
+        // 실제 imageUrl 만들기 + Redis 제거
+        String imageUrl = imageCommandService.commit(email, fileKey);
+        return CustomResponse.onSuccess(memberCommandService.uploadProfileImage(email, fileKey, imageUrl));
     }
 
     @Operation(method = "GET", summary = "회원 정보 조회", description = "회원 정보 조회 api입니다.")
