@@ -27,7 +27,7 @@ public class PostImage extends BaseEntity {
     private Post post;
 
     // 양방향 연관관계 편의용(동기화) setter
-    public void setPost(Post post) {
+    public void updatePost(Post post) {
         this.post = post;
     }
 

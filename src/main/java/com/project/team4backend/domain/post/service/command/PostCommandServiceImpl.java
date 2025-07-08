@@ -33,10 +33,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         Post saved = postRepository.save(post);
 
-        return PostResDTO.PostCreateResDTO.builder()
-                .postId(saved.getPostId())
-                .message("게시글이 등록되었습니다.")
-                .build();
+        return PostConverter.toCreateDTO(saved);
     }
 
     @Override
