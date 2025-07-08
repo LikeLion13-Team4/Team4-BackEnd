@@ -49,11 +49,25 @@ public class ImageCommandServiceImpl implements ImageCommandService {
     public ImageResDTO.PresignedUrlResDTO generatePresignedUrl(String email, ImageReqDTO.PresignedUrlDTO presignedUrlDTO) {
         validateFileExtension(presignedUrlDTO.fileExtension());
         validateContentType(presignedUrlDTO.contentType());
+    public ImageResDTO.PresignedUrlResDTO generatePresignedUrl(String email, ImageReqDTO.PresignedUrlReqDTO presignedUrlReqDTO) {
+        return generateSinglePresignedUrl(email, presignedUrlReqDTO);
+    }
 
-        String fileKey = generateFileKey(presignedUrlDTO.fileExtension());
+
+    /**
+     * 단일 Presigned URL 생성 공통 메서드
+     * @param email 사용자 이메일
+     * @param presignedUrlReqDTO 요청 DTO
+     * @return Presigned URL 응답 DTO
+     */
+    private ImageResDTO.PresignedUrlResDTO generateSinglePresignedUrl(String email, ImageReqDTO.PresignedUrlReqDTO presignedUrlReqDTO) {
+        validateFileExtension(presignedUrlReqDTO.fileExtension());
+        validateContentType(presignedUrlReqDTO.contentType());
+
+        String fileKey = generateFileKey(presignedUrlReqDTO.fileExtension());
 
         try {
-            PutObjectRequest putObjectRequest = ImageConverter.toPutObjectRequest(bucketName, fileKey, presignedUrlDTO.contentType());
+            PutObjectRequest putObjectRequest = ImageConverter.toPutObjectRequest(bucketName, fileKey, presignedUrlReqDTO.contentType());
 
             PutObjectPresignRequest presignRequest = ImageConverter.toPutObjectPresignRequest(Duration.ofMinutes(presignedUrlDurationMinutes), putObjectRequest);
 

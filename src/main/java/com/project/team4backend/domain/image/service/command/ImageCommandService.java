@@ -4,7 +4,7 @@ import com.project.team4backend.domain.image.dto.request.ImageReqDTO;
 import com.project.team4backend.domain.image.dto.response.ImageResDTO;
 
 public interface ImageCommandService {
-    ImageResDTO.PresignedUrlResDTO generatePresignedUrl(String email, ImageReqDTO.PresignedUrlDTO presignedUrl);
+    ImageResDTO.PresignedUrlResDTO generatePresignedUrl(String email, ImageReqDTO.PresignedUrlReqDTO presignedUrl);
 
     String commit(String fileKey);
 
