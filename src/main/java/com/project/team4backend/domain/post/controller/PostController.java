@@ -74,6 +74,17 @@ public class PostController {
         return CustomResponse.onSuccess(postQueryService.getAllPosts(pageable));
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "게시글 검색", description = "페이지네이션을 이용해 제목 or 내용을 검색하여 관련 게시글 리스트를 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getAllSearchPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam("keyword") String keyword) {
+
+        Pageable pageable = PageRequest.of(page-1, size, Sort.by(Sort.Direction.DESC, "postId"));
+        return CustomResponse.onSuccess(postQueryService.getAllSearchPosts(keyword, pageable));
+    }
+
     @PutMapping("/{postId}")
     @Operation(summary = "게시글 수정", description = "본인이 작성한 게시글을 수정합니다.")
     public CustomResponse<PostResDTO.PostUpdateResDTO> updatePost(

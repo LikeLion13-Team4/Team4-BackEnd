@@ -54,7 +54,16 @@ public class PostQueryServiceImpl implements PostQueryService {
     @Override
     public PostResDTO.PostPageResDTO getAllPosts(Pageable pageable) {
         Page<Post> postPage = postRepository.findAllByOrderByPostIdDesc(pageable);
+        return toPostPageWithCounts(postPage);
+    }
 
+    @Override
+    public PostResDTO.PostPageResDTO getAllSearchPosts(String keyword, Pageable pageable) {
+        Page<Post> postPage = postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword, pageable);
+        return toPostPageWithCounts(postPage);
+    }
+
+    private PostResDTO.PostPageResDTO toPostPageWithCounts(Page<Post> postPage) {
         List<PostResDTO.PostSimpleDTO> posts = postPage.getContent().stream()
                 .map(post -> {
                     int likeCount = postLikeRepository.countByPost(post);

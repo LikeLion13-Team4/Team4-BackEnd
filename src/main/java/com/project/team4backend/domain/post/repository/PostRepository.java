@@ -15,4 +15,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     //대량 조회를 위한 페이지 네이션
     Page<Post> findAllByOrderByPostIdDesc(Pageable pageable);
+
+    Page<Post> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(String titleKeyword, String contentKeyword, Pageable pageable);
 }
