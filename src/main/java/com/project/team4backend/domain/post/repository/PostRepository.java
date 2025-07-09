@@ -1,6 +1,7 @@
 package com.project.team4backend.domain.post.repository;
 
 
+import com.project.team4backend.domain.member.entity.Member;
 import com.project.team4backend.domain.post.entity.Post;
 import com.project.team4backend.domain.post.entity.enums.PostTagType;
 import org.springframework.data.domain.Page;
@@ -22,4 +23,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p WHERE :tag MEMBER OF p.tags")
     Page<Post> findAllByTags(PostTagType tag, Pageable pageable);
+
+    //내가 작성한 글 목록 조회
+    Page<Post> findAllByMember(Member member, Pageable pageable);
 }
