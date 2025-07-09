@@ -1,5 +1,9 @@
 package com.project.team4backend.domain.post.service.command;
 
+import com.project.team4backend.domain.comment.entity.Comment;
+import com.project.team4backend.domain.comment.entity.CommentLike;
+import com.project.team4backend.domain.comment.repository.CommentLikeRepository;
+import com.project.team4backend.domain.comment.repository.CommentRepository;
 import com.project.team4backend.domain.image.exception.ImageErrorCode;
 import com.project.team4backend.domain.image.exception.ImageException;
 import com.project.team4backend.domain.image.service.RedisImageTracker;
@@ -37,6 +41,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     private final PostLikeRepository postLikeRepository;
     private final PostScrapRepository postScrapRepository;
@@ -124,6 +130,15 @@ public class PostCommandServiceImpl implements PostCommandService {
         if (!post.getMember().equals(member)) {
             throw new PostException(PostErrorCode.UNAUTHORIZED_POST_DELETE);
         }
+        // 4. 댓글 좋아요 삭제
+        List<Comment> comments = post.getComments();
+        post.getComments().forEach(comment -> {
+            commentLikeRepository.deleteAllByCommentIn(comments);
+        });
+
+        // 5. 댓글 삭제
+        commentRepository.deleteAll(comments);
+
         // s3 + redis  모든 이미지 삭제
         post.getImages().forEach(image -> imageCommandService.delete(email, image.getImageUrlKey()));
 
