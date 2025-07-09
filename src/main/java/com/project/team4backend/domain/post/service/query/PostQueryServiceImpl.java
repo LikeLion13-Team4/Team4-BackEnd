@@ -83,7 +83,7 @@ public class PostQueryServiceImpl implements PostQueryService {
         Page<Post> postPage = postScrapRepository.findByMember(member, pageable)
                 .map(PostScrap::getPost);
 
-        return toPostPageWithoutCounts(postPage); // ✅ 리턴 타입과 일치
+        return toPostPageWithoutCounts(postPage);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class PostQueryServiceImpl implements PostQueryService {
         Page<Post> postPage = postLikeRepository.findByMember(member, pageable)
                 .map(PostLike::getPost);
 
-        return toPostPageWithoutCounts(postPage); // ✅
+        return toPostPageWithoutCounts(postPage);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class PostQueryServiceImpl implements PostQueryService {
                 .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = commentRepository.findDistinctPostsByMember(member, pageable);
-        return toPostPageWithoutCounts(postPage); // ✅
+        return toPostPageWithoutCounts(postPage);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class PostQueryServiceImpl implements PostQueryService {
                 .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = postRepository.findAllByMember(member, pageable);
-        return toPostPageWithoutCounts(postPage); // 👈 카운트 제거 버전 사용
+        return toPostPageWithoutCounts(postPage);
     }
 
     private PostResDTO.PostPageResDTO toPostPageWithCounts(Page<Post> postPage) {
