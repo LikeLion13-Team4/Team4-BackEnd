@@ -5,6 +5,7 @@ import com.project.team4backend.domain.image.dto.response.ImageResDTO;
 import com.project.team4backend.domain.image.service.command.ImageCommandService;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.dto.request.PostReqDTO;
+import com.project.team4backend.domain.post.entity.enums.PostTagType;
 import com.project.team4backend.domain.post.service.command.PostCommandService;
 import com.project.team4backend.domain.post.service.query.PostQueryService;
 import com.project.team4backend.global.apiPayload.CustomResponse;
@@ -72,6 +73,28 @@ public class PostController {
 
         Pageable pageable = PageRequest.of(page-1, size, Sort.by(Sort.Direction.DESC, "postId"));
         return CustomResponse.onSuccess(postQueryService.getAllPosts(pageable));
+    }
+
+    @GetMapping("/tag")
+    @Operation(summary = "태그로 게시글 검색", description = "페이지네이션을 이용해 태그를 입력해 관련 게시글 리스트를 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getAllPostsToTag(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam("tag") String tagStr){
+        PostTagType tag = PostTagType.valueOf(tagStr.toUpperCase()); // 대소문자 변환 안전처리
+        Pageable pageable = PageRequest.of(page-1, size, Sort.by(Sort.Direction.DESC, "postId"));
+        return CustomResponse.onSuccess(postQueryService.getAllPostsToTag(tag, pageable));
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "게시글 검색", description = "페이지네이션을 이용해 제목 or 내용을 검색하여 관련 게시글 리스트를 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getAllSearchPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam("keyword") String keyword) {
+
+        Pageable pageable = PageRequest.of(page-1, size, Sort.by(Sort.Direction.DESC, "postId"));
+        return CustomResponse.onSuccess(postQueryService.getAllSearchPosts(keyword, pageable));
     }
 
     @GetMapping("/scraps")

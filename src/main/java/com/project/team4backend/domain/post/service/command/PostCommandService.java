@@ -2,8 +2,6 @@ package com.project.team4backend.domain.post.service.command;
 
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.dto.request.PostReqDTO;
-import com.project.team4backend.domain.post.enums.PostTagType;
-
 
 
 public interface PostCommandService {

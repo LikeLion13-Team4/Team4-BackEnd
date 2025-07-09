@@ -8,6 +8,7 @@ import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.domain.post.converter.PostConverter;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.entity.Post;
+import com.project.team4backend.domain.post.entity.enums.PostTagType;
 import com.project.team4backend.domain.post.entity.PostLike;
 import com.project.team4backend.domain.post.entity.PostScrap;
 import com.project.team4backend.domain.post.exception.PostErrorCode;
@@ -59,24 +60,25 @@ public class PostQueryServiceImpl implements PostQueryService {
     @Override
     public PostResDTO.PostPageResDTO getAllPosts(Pageable pageable) {
         Page<Post> postPage = postRepository.findAllByOrderByPostIdDesc(pageable);
+        return toPostPageWithCounts(postPage);
+    }
 
-        List<PostResDTO.PostSimpleDTO> posts = postPage.getContent().stream()
-                .map(post -> {
-                    int likeCount = postLikeRepository.countByPost(post);
-                    int scrapCount = postScrapRepository.countByPost(post);
-                    int commentCount = post.getComments().size();
+    @Override
+    public PostResDTO.PostPageResDTO getAllSearchPosts(String keyword, Pageable pageable) {
+        Page<Post> postPage = postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword, pageable);
+        return toPostPageWithCounts(postPage);
+    }
 
-                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
-                })
-                .toList();
-
-        return PostConverter.toPostPageDTO(postPage, posts);
+    @Override
+    public PostResDTO.PostPageResDTO getAllPostsToTag(PostTagType tag, Pageable pageable) {
+        Page<Post> postPage = postRepository.findAllByTags(tag, pageable);
+        return toPostPageWithCounts(postPage);
     }
 
     @Override
     public PostResDTO.PostPageResDTO getScrappedPosts(Pageable pageable, String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(PostErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<PostScrap> scrapPage = postScrapRepository.findByMember(member, pageable);
         List<PostResDTO.PostSimpleDTO> postDTOs = scrapPage.getContent().stream()
@@ -98,7 +100,7 @@ public class PostQueryServiceImpl implements PostQueryService {
     @Override
     public PostResDTO.PostPageResDTO getLikedPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(PostErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<PostLike> likedPage = postLikeRepository.findByMember(member, pageable);
 
@@ -119,34 +121,28 @@ public class PostQueryServiceImpl implements PostQueryService {
     @Override
     public PostResDTO.PostPageResDTO getCommentedPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(PostErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = commentRepository.findDistinctPostsByMember(member, pageable);
-
-        List<PostResDTO.PostSimpleDTO> posts = postPage.getContent().stream()
-                .map(post -> {
-                    int likeCount = postLikeRepository.countByPost(post);
-                    int scrapCount = postScrapRepository.countByPost(post);
-                    int commentCount = post.getComments().size();
-
-                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
-                })
-                .toList();
-
-        return PostConverter.toPostPageDTO(postPage, posts);
+        return toPostPageWithCounts(postPage);
     }
 
     @Override
     public PostResDTO.PostPageResDTO getMyPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(PostErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = postRepository.findAllByMember(member, pageable);
+        return toPostPageWithCounts(postPage);
+    }
+
+    private PostResDTO.PostPageResDTO toPostPageWithCounts(Page<Post> postPage) {
         List<PostResDTO.PostSimpleDTO> posts = postPage.getContent().stream()
                 .map(post -> {
                     int likeCount = postLikeRepository.countByPost(post);
                     int scrapCount = postScrapRepository.countByPost(post);
                     int commentCount = post.getComments().size();
+
                     return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
                 })
                 .toList();
