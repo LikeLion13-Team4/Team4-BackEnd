@@ -7,6 +7,7 @@ import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.domain.post.converter.PostConverter;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.entity.Post;
+import com.project.team4backend.domain.post.enums.PostTagType;
 import com.project.team4backend.domain.post.exception.PostErrorCode;
 import com.project.team4backend.domain.post.exception.PostException;
 import com.project.team4backend.domain.post.repository.PostLikeRepository;
@@ -60,6 +61,12 @@ public class PostQueryServiceImpl implements PostQueryService {
     @Override
     public PostResDTO.PostPageResDTO getAllSearchPosts(String keyword, Pageable pageable) {
         Page<Post> postPage = postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword, pageable);
+        return toPostPageWithCounts(postPage);
+    }
+
+    @Override
+    public PostResDTO.PostPageResDTO getAllPostsToTag(PostTagType tag, Pageable pageable) {
+        Page<Post> postPage = postRepository.findAllByTags(tag, pageable);
         return toPostPageWithCounts(postPage);
     }
 
