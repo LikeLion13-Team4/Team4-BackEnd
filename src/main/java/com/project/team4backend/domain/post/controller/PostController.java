@@ -64,7 +64,7 @@ public class PostController {
         return CustomResponse.onSuccess(res);
     }
 
-    @GetMapping("/posts")
+    @GetMapping
     @Operation(summary = "게시글 전체 조회 (페이지네이션)", description = "페이지네이션을 이용해 게시글 리스트를 조회합니다.")
     public CustomResponse<PostResDTO.PostPageResDTO> getAllPosts(
             @RequestParam(defaultValue = "0") int page,
