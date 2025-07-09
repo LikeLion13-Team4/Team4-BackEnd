@@ -18,4 +18,6 @@ public interface PostScrapRepository extends JpaRepository<PostScrap, Long> {
     int countByPost(Post post);
 
     Page<PostScrap> findByMember(Member member, Pageable pageable);
+
+    void deleteAllByPost(Post post);
 }

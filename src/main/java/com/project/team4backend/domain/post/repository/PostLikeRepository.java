@@ -18,4 +18,5 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
     Page<PostLike> findByMember(Member member, Pageable pageable);
 
+    void deleteAllByPost(Post post);
 }
