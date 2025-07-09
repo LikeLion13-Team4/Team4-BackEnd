@@ -62,8 +62,30 @@ public class PostResDTO {
     ) {}
 
     @Builder
+    public record PostSimpleWithoutCountDTO(
+            Long postId,
+            String title,
+            String content,
+            String authorNickname,
+            Set<PostTagType> tags,
+            String thumbnailImageUrl,
+            LocalDateTime createdAt
+    ) {}
+
+
+
+    @Builder
     public record PostPageResDTO(
             List<PostSimpleDTO> posts,
+            int currentPage,
+            int totalPages,
+            long totalElements,
+            boolean isLast
+    ) {}
+
+    @Builder
+    public record PostPageWithoutCountResDTO(
+            List<PostSimpleWithoutCountDTO> posts,
             int currentPage,
             int totalPages,
             long totalElements,

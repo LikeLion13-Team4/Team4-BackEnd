@@ -76,64 +76,43 @@ public class PostQueryServiceImpl implements PostQueryService {
     }
 
     @Override
-    public PostResDTO.PostPageResDTO getScrappedPosts(Pageable pageable, String email) {
+    public PostResDTO.PostPageWithoutCountResDTO getScrappedPosts(Pageable pageable, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
 
-        Page<PostScrap> scrapPage = postScrapRepository.findByMember(member, pageable);
-        List<PostResDTO.PostSimpleDTO> postDTOs = scrapPage.getContent().stream()
-                .map(scrap -> {
-                    Post post = scrap.getPost();
-                    int likeCount = postLikeRepository.countByPost(post);
-                    int scrapCount = postScrapRepository.countByPost(post);
-                    int commentCount = post.getComments().size();
+        Page<Post> postPage = postScrapRepository.findByMember(member, pageable)
+                .map(PostScrap::getPost);
 
-
-                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
-                })
-                .toList();
-
-        return PostConverter.toPostPageDTO(scrapPage.map(PostScrap::getPost), postDTOs);
+        return toPostPageWithoutCounts(postPage); // ✅ 리턴 타입과 일치
     }
 
-    //좋아요 목록 조회
     @Override
-    public PostResDTO.PostPageResDTO getLikedPosts(String email, Pageable pageable) {
+    public PostResDTO.PostPageWithoutCountResDTO getLikedPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
 
-        Page<PostLike> likedPage = postLikeRepository.findByMember(member, pageable);
+        Page<Post> postPage = postLikeRepository.findByMember(member, pageable)
+                .map(PostLike::getPost);
 
-        List<PostResDTO.PostSimpleDTO> posts = likedPage.getContent().stream()
-                .map(PostLike::getPost)
-                .map(post -> {
-                    int likeCount = postLikeRepository.countByPost(post);
-                    int scrapCount = postScrapRepository.countByPost(post);
-                    int commentCount = post.getComments().size();
-                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
-                })
-                .toList();
-
-        return PostConverter.toPostPageDTO(likedPage.map(PostLike::getPost), posts);
+        return toPostPageWithoutCounts(postPage); // ✅
     }
 
-    //댓글 단 게시글 목록 조회
     @Override
-    public PostResDTO.PostPageResDTO getCommentedPosts(String email, Pageable pageable) {
+    public PostResDTO.PostPageWithoutCountResDTO getCommentedPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = commentRepository.findDistinctPostsByMember(member, pageable);
-        return toPostPageWithCounts(postPage);
+        return toPostPageWithoutCounts(postPage); // ✅
     }
 
     @Override
-    public PostResDTO.PostPageResDTO getMyPosts(String email, Pageable pageable) {
+    public PostResDTO.PostPageWithoutCountResDTO getMyPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = postRepository.findAllByMember(member, pageable);
-        return toPostPageWithCounts(postPage);
+        return toPostPageWithoutCounts(postPage); // 👈 카운트 제거 버전 사용
     }
 
     private PostResDTO.PostPageResDTO toPostPageWithCounts(Page<Post> postPage) {
@@ -148,5 +127,13 @@ public class PostQueryServiceImpl implements PostQueryService {
                 .toList();
 
         return PostConverter.toPostPageDTO(postPage, posts);
+    }
+
+    private PostResDTO.PostPageWithoutCountResDTO toPostPageWithoutCounts(Page<Post> postPage) {
+        List<PostResDTO.PostSimpleWithoutCountDTO> posts = postPage.getContent().stream()
+                .map(PostConverter::toPostSimpleDTOWithoutCounts)  // 단순 변환 (카운트 없음)
+                .toList();
+
+        return PostConverter.toPostPageWithoutCountDTO(postPage, posts);
     }
 }

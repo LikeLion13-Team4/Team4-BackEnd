@@ -109,11 +109,32 @@ public class PostConverter {
                 .createdAt(post.getCreatedAt())
                 .build();
     }
+    public static PostResDTO.PostSimpleWithoutCountDTO toPostSimpleDTOWithoutCounts(Post post) {
+        return PostResDTO.PostSimpleWithoutCountDTO.builder()
+                .postId(post.getPostId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .createdAt(post.getCreatedAt())
+                .thumbnailImageUrl(
+                        post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl()
+                )
+                .authorNickname(post.getMember().getNickname())
+                .build();
+    }
 
     public static PostResDTO.PostPageResDTO toPostPageDTO(Page<Post> postPage, List<PostResDTO.PostSimpleDTO> posts) {
         return PostResDTO.PostPageResDTO.builder()
                 .posts(posts)
                 .currentPage(postPage.getNumber() + 1) // 1부터 시작
+                .totalPages(postPage.getTotalPages())
+                .totalElements(postPage.getTotalElements())
+                .isLast(postPage.isLast())
+                .build();
+    }
+    public static PostResDTO.PostPageWithoutCountResDTO toPostPageWithoutCountDTO(Page<Post> postPage, List<PostResDTO.PostSimpleWithoutCountDTO> posts) {
+        return PostResDTO.PostPageWithoutCountResDTO.builder()
+                .posts(posts)
+                .currentPage(postPage.getNumber() + 1)
                 .totalPages(postPage.getTotalPages())
                 .totalElements(postPage.getTotalElements())
                 .isLast(postPage.isLast())
