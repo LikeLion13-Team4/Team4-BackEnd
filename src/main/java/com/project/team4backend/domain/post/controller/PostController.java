@@ -64,7 +64,7 @@ public class PostController {
         return CustomResponse.onSuccess(res);
     }
 
-    @GetMapping("/posts")
+    @GetMapping
     @Operation(summary = "게시글 전체 조회 (페이지네이션)", description = "페이지네이션을 이용해 게시글 리스트를 조회합니다.")
     public CustomResponse<PostResDTO.PostPageResDTO> getAllPosts(
             @RequestParam(defaultValue = "0") int page,
@@ -72,6 +72,54 @@ public class PostController {
 
         Pageable pageable = PageRequest.of(page-1, size, Sort.by(Sort.Direction.DESC, "postId"));
         return CustomResponse.onSuccess(postQueryService.getAllPosts(pageable));
+    }
+
+    @GetMapping("/scraps")
+    @Operation(summary = "내가 스크랩한 게시글 조회 (페이지네이션)", description = "로그인한 사용자가 스크랩한 게시글을 페이지네이션으로 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getMyScrapPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String email = userDetails.getUsername();
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return CustomResponse.onSuccess(postQueryService.getScrappedPosts(pageable, email));
+    }
+
+    @GetMapping("/liked")
+    @Operation(summary = "좋아요한 게시글 목록 조회", description = "로그인한 사용자가 좋아요한 게시글을 페이지네이션으로 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getLikedPosts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        String email = userDetails.getUsername();
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return CustomResponse.onSuccess(postQueryService.getLikedPosts(email, pageable));
+    }
+
+    @GetMapping("/my-comments")
+    @Operation(summary = "댓글 단 게시글 목록 조회", description = "사용자가 댓글 단 게시글을 페이지네이션으로 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getCommentedPosts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        String email = userDetails.getUsername();
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return CustomResponse.onSuccess(postQueryService.getCommentedPosts(email, pageable));
+    }
+
+    @GetMapping("/my")
+    @Operation(summary = "내가 작성한 게시글 조회", description = "자신이 작성한 게시글을 페이지네이션으로 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getMyPosts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "postId"));
+        String email = userDetails.getUsername();
+        return CustomResponse.onSuccess(postQueryService.getMyPosts(email, pageable));
     }
 
     @PutMapping("/{postId}")
