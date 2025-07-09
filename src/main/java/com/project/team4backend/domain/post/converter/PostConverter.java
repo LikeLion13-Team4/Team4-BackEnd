@@ -110,15 +110,20 @@ public class PostConverter {
                 .build();
     }
     public static PostResDTO.PostSimpleWithoutCountDTO toPostSimpleDTOWithoutCounts(Post post) {
+        String preview = post.getContent().length() > 100
+                ? post.getContent().substring(0, 100) + "..."
+                : post.getContent(); // 100자 초과하면 ... 처리
+
         return PostResDTO.PostSimpleWithoutCountDTO.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
-                .content(post.getContent())
-                .createdAt(post.getCreatedAt())
+                .content(preview)
+                .authorNickname(post.getMember().getNickname())
+                .tags(post.getTags())
                 .thumbnailImageUrl(
                         post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl()
                 )
-                .authorNickname(post.getMember().getNickname())
+                .createdAt(post.getCreatedAt())
                 .build();
     }
 
