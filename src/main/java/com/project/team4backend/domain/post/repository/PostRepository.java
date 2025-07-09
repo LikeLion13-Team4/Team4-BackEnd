@@ -1,6 +1,7 @@
 package com.project.team4backend.domain.post.repository;
 
 
+import com.project.team4backend.domain.member.entity.Member;
 import com.project.team4backend.domain.post.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     //대량 조회를 위한 페이지 네이션
     Page<Post> findAllByOrderByPostIdDesc(Pageable pageable);
+
+    //내가 작성한 글 목록 조회
+    Page<Post> findAllByMember(Member member, Pageable pageable);
 }

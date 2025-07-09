@@ -13,4 +13,9 @@ public interface PostQueryService {
 
     //좋아요 목록 조회
     PostResDTO.PostPageResDTO getLikedPosts(String email, Pageable pageable);
+
+    //댓글 단 게시글 목록 조회
+    PostResDTO.PostPageResDTO getCommentedPosts(String email, Pageable pageable);
+
+    PostResDTO.PostPageResDTO getMyPosts(String email, Pageable pageable);
 }

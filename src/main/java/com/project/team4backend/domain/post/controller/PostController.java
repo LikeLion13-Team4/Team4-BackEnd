@@ -98,6 +98,30 @@ public class PostController {
         return CustomResponse.onSuccess(postQueryService.getLikedPosts(email, pageable));
     }
 
+    @GetMapping("/my-comments")
+    @Operation(summary = "댓글 단 게시글 목록 조회", description = "사용자가 댓글 단 게시글을 페이지네이션으로 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getCommentedPosts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        String email = userDetails.getUsername();
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return CustomResponse.onSuccess(postQueryService.getCommentedPosts(email, pageable));
+    }
+
+    @GetMapping("/my")
+    @Operation(summary = "내가 작성한 게시글 조회", description = "자신이 작성한 게시글을 페이지네이션으로 조회합니다.")
+    public CustomResponse<PostResDTO.PostPageResDTO> getMyPosts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "postId"));
+        String email = userDetails.getUsername();
+        return CustomResponse.onSuccess(postQueryService.getMyPosts(email, pageable));
+    }
+
     @PutMapping("/{postId}")
     @Operation(summary = "게시글 수정", description = "본인이 작성한 게시글을 수정합니다.")
     public CustomResponse<PostResDTO.PostUpdateResDTO> updatePost(
