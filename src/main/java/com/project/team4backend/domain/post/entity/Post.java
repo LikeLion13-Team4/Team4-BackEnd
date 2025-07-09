@@ -2,13 +2,11 @@ package com.project.team4backend.domain.post.entity;
 
 import com.project.team4backend.domain.comment.entity.Comment;
 import com.project.team4backend.domain.member.entity.Member;
-import com.project.team4backend.domain.post.dto.request.PostReqDTO;
-import com.project.team4backend.domain.post.enums.PostTagType;
+import com.project.team4backend.domain.post.entity.enums.PostTagType;
 import com.project.team4backend.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

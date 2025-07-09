@@ -7,7 +7,7 @@ import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.domain.post.converter.PostConverter;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.entity.Post;
-import com.project.team4backend.domain.post.enums.PostTagType;
+import com.project.team4backend.domain.post.entity.enums.PostTagType;
 import com.project.team4backend.domain.post.exception.PostErrorCode;
 import com.project.team4backend.domain.post.exception.PostException;
 import com.project.team4backend.domain.post.repository.PostLikeRepository;

@@ -1,6 +1,6 @@
 package com.project.team4backend.domain.post.dto.request;
 
-import com.project.team4backend.domain.post.enums.PostTagType;
+import com.project.team4backend.domain.post.entity.enums.PostTagType;
 import lombok.Builder;
 
 import java.util.List;

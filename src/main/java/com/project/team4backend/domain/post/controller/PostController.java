@@ -5,7 +5,7 @@ import com.project.team4backend.domain.image.dto.response.ImageResDTO;
 import com.project.team4backend.domain.image.service.command.ImageCommandService;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.dto.request.PostReqDTO;
-import com.project.team4backend.domain.post.enums.PostTagType;
+import com.project.team4backend.domain.post.entity.enums.PostTagType;
 import com.project.team4backend.domain.post.service.command.PostCommandService;
 import com.project.team4backend.domain.post.service.query.PostQueryService;
 import com.project.team4backend.global.apiPayload.CustomResponse;

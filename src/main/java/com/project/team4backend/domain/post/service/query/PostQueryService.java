@@ -1,7 +1,7 @@
 package com.project.team4backend.domain.post.service.query;
 
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
-import com.project.team4backend.domain.post.enums.PostTagType;
+import com.project.team4backend.domain.post.entity.enums.PostTagType;
 import org.springframework.data.domain.Pageable;
 
 public interface PostQueryService {

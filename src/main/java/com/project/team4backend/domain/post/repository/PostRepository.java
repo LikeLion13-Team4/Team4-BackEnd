@@ -2,7 +2,7 @@ package com.project.team4backend.domain.post.repository;
 
 
 import com.project.team4backend.domain.post.entity.Post;
-import com.project.team4backend.domain.post.enums.PostTagType;
+import com.project.team4backend.domain.post.entity.enums.PostTagType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
