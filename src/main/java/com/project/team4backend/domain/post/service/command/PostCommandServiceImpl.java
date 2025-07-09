@@ -130,13 +130,19 @@ public class PostCommandServiceImpl implements PostCommandService {
         if (!post.getMember().equals(member)) {
             throw new PostException(PostErrorCode.UNAUTHORIZED_POST_DELETE);
         }
-        // 4. 댓글 좋아요 삭제
-        List<Comment> comments = post.getComments();
-        post.getComments().forEach(comment -> {
-            commentLikeRepository.deleteAllByCommentIn(comments);
-        });
+        // 게시글 관련 스크랩 삭제
+        postScrapRepository.deleteAllByPost(post);
 
-        // 5. 댓글 삭제
+        // 게시글 관련 좋아요 삭제
+        postLikeRepository.deleteAllByPost(post);
+
+        // 게시글의 댓글 전체 조회
+        List<Comment> comments = commentRepository.findAllByPost(post);
+
+        // 댓글 좋아요 삭제
+        commentLikeRepository.deleteAllByCommentIn(comments);
+
+        // 댓글 삭제
         commentRepository.deleteAll(comments);
 
         // s3 + redis  모든 이미지 삭제

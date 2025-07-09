@@ -29,4 +29,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Page<Post> findDistinctPostsByMember(@Param("member") Member member, Pageable pageable);
 
 
+    List<Comment> findAllByPost(Post post);
 }
