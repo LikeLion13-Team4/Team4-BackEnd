@@ -110,13 +110,31 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostResDTO.PostPageResDTO toPostPageDTO(Page<Post> postPage, List<PostResDTO.PostSimpleDTO> posts) {
-        return PostResDTO.PostPageResDTO.builder()
+    public static PostResDTO.PostMyDTO toPostMyDTO(Post post) {
+        String preview = post.getContent().length() > 100
+                ? post.getContent().substring(0, 100) + "..."
+                : post.getContent(); //100자 초과하면 ...처리
+
+        return PostResDTO.PostMyDTO.builder()
+                .postId(post.getPostId())
+                .title(post.getTitle())
+                .content(preview)
+                .authorNickname(post.getMember().getNickname())
+                .tags(post.getTags())
+                .thumbnailImageUrl(
+                        post.getImages().isEmpty() ? null : post.getImages().get(0).getImageUrl()
+                )
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
+
+    public static <T> PostResDTO.PostPageResDTO<T> toPostPageDTO(Page<?> page, List<T> posts) {
+        return PostResDTO.PostPageResDTO.<T>builder()
                 .posts(posts)
-                .currentPage(postPage.getNumber() + 1) // 1부터 시작
-                .totalPages(postPage.getTotalPages())
-                .totalElements(postPage.getTotalElements())
-                .isLast(postPage.isLast())
+                .currentPage(page.getNumber() + 1)
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .isLast(page.isLast())
                 .build();
     }
 

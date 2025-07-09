@@ -62,8 +62,19 @@ public class PostResDTO {
     ) {}
 
     @Builder
-    public record PostPageResDTO(
-            List<PostSimpleDTO> posts,
+    public record PostMyDTO(
+            Long postId,
+            String title,
+            String content,
+            String authorNickname,
+            Set<PostTagType> tags,
+            String thumbnailImageUrl,
+            LocalDateTime createdAt
+    ) {}
+
+    @Builder
+    public record PostPageResDTO<T>(
+            List<T> posts,
             int currentPage,
             int totalPages,
             long totalElements,

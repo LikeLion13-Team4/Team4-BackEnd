@@ -73,43 +73,32 @@ public class PostQueryServiceImpl implements PostQueryService {
         return PostConverter.toPostPageDTO(postPage, posts);
     }
 
+    //스크랩 목록 조회
     @Override
-    public PostResDTO.PostPageResDTO getScrappedPosts(Pageable pageable, String email) {
+    public PostResDTO.PostPageResDTO<PostResDTO.PostMyDTO> getScrappedPosts(Pageable pageable, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<PostScrap> scrapPage = postScrapRepository.findByMember(member, pageable);
-        List<PostResDTO.PostSimpleDTO> postDTOs = scrapPage.getContent().stream()
-                .map(scrap -> {
-                    Post post = scrap.getPost();
-                    int likeCount = postLikeRepository.countByPost(post);
-                    int scrapCount = postScrapRepository.countByPost(post);
-                    int commentCount = post.getComments().size();
 
-
-                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
-                })
+        List<PostResDTO.PostMyDTO> posts = scrapPage.getContent().stream()
+                .map(scrap -> PostConverter.toPostMyDTO(scrap.getPost()))
                 .toList();
 
-        return PostConverter.toPostPageDTO(scrapPage.map(PostScrap::getPost), postDTOs);
+        return PostConverter.toPostPageDTO(scrapPage.map(PostScrap::getPost), posts);
     }
 
     //좋아요 목록 조회
     @Override
-    public PostResDTO.PostPageResDTO getLikedPosts(String email, Pageable pageable) {
+    public PostResDTO.PostPageResDTO<PostResDTO.PostMyDTO> getLikedPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<PostLike> likedPage = postLikeRepository.findByMember(member, pageable);
 
-        List<PostResDTO.PostSimpleDTO> posts = likedPage.getContent().stream()
+        List<PostResDTO.PostMyDTO> posts = likedPage.getContent().stream()
                 .map(PostLike::getPost)
-                .map(post -> {
-                    int likeCount = postLikeRepository.countByPost(post);
-                    int scrapCount = postScrapRepository.countByPost(post);
-                    int commentCount = post.getComments().size();
-                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
-                })
+                .map(PostConverter::toPostMyDTO)
                 .toList();
 
         return PostConverter.toPostPageDTO(likedPage.map(PostLike::getPost), posts);
@@ -117,38 +106,28 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     //댓글 단 게시글 목록 조회
     @Override
-    public PostResDTO.PostPageResDTO getCommentedPosts(String email, Pageable pageable) {
+    public PostResDTO.PostPageResDTO<PostResDTO.PostMyDTO> getCommentedPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = commentRepository.findDistinctPostsByMember(member, pageable);
 
-        List<PostResDTO.PostSimpleDTO> posts = postPage.getContent().stream()
-                .map(post -> {
-                    int likeCount = postLikeRepository.countByPost(post);
-                    int scrapCount = postScrapRepository.countByPost(post);
-                    int commentCount = post.getComments().size();
-
-                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
-                })
+        List<PostResDTO.PostMyDTO> posts = postPage.getContent().stream()
+                .map(PostConverter::toPostMyDTO)
                 .toList();
 
         return PostConverter.toPostPageDTO(postPage, posts);
     }
 
     @Override
-    public PostResDTO.PostPageResDTO getMyPosts(String email, Pageable pageable) {
+    public PostResDTO.PostPageResDTO<PostResDTO.PostMyDTO> getMyPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(PostErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = postRepository.findAllByMember(member, pageable);
-        List<PostResDTO.PostSimpleDTO> posts = postPage.getContent().stream()
-                .map(post -> {
-                    int likeCount = postLikeRepository.countByPost(post);
-                    int scrapCount = postScrapRepository.countByPost(post);
-                    int commentCount = post.getComments().size();
-                    return PostConverter.toPostSimpleDTO(post, likeCount, scrapCount, commentCount);
-                })
+
+        List<PostResDTO.PostMyDTO> posts = postPage.getContent().stream()
+                .map(PostConverter::toPostMyDTO)
                 .toList();
 
         return PostConverter.toPostPageDTO(postPage, posts);
