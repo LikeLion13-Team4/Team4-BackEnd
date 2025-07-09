@@ -99,8 +99,8 @@ public class PostController {
 
     @GetMapping("/scraps")
     @Operation(summary = "내가 스크랩한 게시글 조회 (페이지네이션)", description = "로그인한 사용자가 스크랩한 게시글을 페이지네이션으로 조회합니다.")
-    public CustomResponse<PostResDTO.PostPageResDTO> getMyScrapPosts(
-            @RequestParam(defaultValue = "0") int page,
+    public CustomResponse<PostResDTO.PostPageWithoutCountResDTO> getMyScrapPosts(
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
@@ -111,9 +111,9 @@ public class PostController {
 
     @GetMapping("/liked")
     @Operation(summary = "좋아요한 게시글 목록 조회", description = "로그인한 사용자가 좋아요한 게시글을 페이지네이션으로 조회합니다.")
-    public CustomResponse<PostResDTO.PostPageResDTO> getLikedPosts(
+    public CustomResponse<PostResDTO.PostPageWithoutCountResDTO> getLikedPosts(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         String email = userDetails.getUsername();
@@ -123,9 +123,9 @@ public class PostController {
 
     @GetMapping("/my-comments")
     @Operation(summary = "댓글 단 게시글 목록 조회", description = "사용자가 댓글 단 게시글을 페이지네이션으로 조회합니다.")
-    public CustomResponse<PostResDTO.PostPageResDTO> getCommentedPosts(
+    public CustomResponse<PostResDTO.PostPageWithoutCountResDTO> getCommentedPosts(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         String email = userDetails.getUsername();
@@ -135,7 +135,7 @@ public class PostController {
 
     @GetMapping("/my")
     @Operation(summary = "내가 작성한 게시글 조회", description = "자신이 작성한 게시글을 페이지네이션으로 조회합니다.")
-    public CustomResponse<PostResDTO.PostPageResDTO> getMyPosts(
+    public CustomResponse<PostResDTO.PostPageWithoutCountResDTO> getMyPosts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
@@ -144,6 +144,7 @@ public class PostController {
         String email = userDetails.getUsername();
         return CustomResponse.onSuccess(postQueryService.getMyPosts(email, pageable));
     }
+
 
     @PutMapping("/{postId}")
     @Operation(summary = "게시글 수정", description = "본인이 작성한 게시글을 수정합니다.")
