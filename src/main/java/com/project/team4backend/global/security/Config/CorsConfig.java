@@ -24,10 +24,18 @@ public class CorsConfig implements WebMvcConfigurer {
         allowedOriginPatterns.add("http://localhost:3000");
         allowedOriginPatterns.add("http://localhost:5500");
         allowedOriginPatterns.add("http://localhost:5501");
+        allowedOriginPatterns.add("http://localhost:5502");
+        allowedOriginPatterns.add("http://localhost:5503");
+        allowedOriginPatterns.add("http://localhost:5504");
+        allowedOriginPatterns.add("http://localhost:5505");
         allowedOriginPatterns.add("http://127.0.0.1:8080");
         allowedOriginPatterns.add("http://127.0.0.1:3000");
         allowedOriginPatterns.add("http://127.0.0.1:5500");
         allowedOriginPatterns.add("http://127.0.0.1:5501");
+        allowedOriginPatterns.add("http://127.0.0.1:5502");
+        allowedOriginPatterns.add("http://127.0.0.1:5503");
+        allowedOriginPatterns.add("http://127.0.0.1:5504");
+        allowedOriginPatterns.add("http://127.0.0.1:5505");
 
 
         //허용하는 HTTP METHOD 지정
