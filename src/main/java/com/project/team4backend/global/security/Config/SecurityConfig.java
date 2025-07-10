@@ -75,6 +75,7 @@ public class SecurityConfig {
         loginFilter.setFilterProcessesUrl("/api/v1/auths/login");
 
         http
+                .cors(cors -> cors.configurationSource(CorsConfig.apiConfigurationSource()))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/", "/index", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers(allowUrl).permitAll()

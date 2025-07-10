@@ -13,7 +13,10 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Table(name = "social_login")
+@Table(
+        name = "social_login",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"social_type", "social_id"}) // 소셜이 다르면 social_id가 겹칠 수 있음
+)
 public class SocialLogin extends BaseEntity {
 
     @Id
