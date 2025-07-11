@@ -26,6 +26,7 @@ public class MemberConverter {
         return MemberResDTO.MemberPreviewResDTO.builder()
                 .userId(member.getId())
                 .email(member.getEmail())
+                .nickname(member.getNickname())
                 .birthday(member.getBirthday())
                 .gender(member.getGender())
                 .height(member.getHeight())
