@@ -15,6 +15,8 @@ import com.project.team4backend.domain.member.exception.MemberErrorCode;
 import com.project.team4backend.domain.member.exception.MemberException;
 import com.project.team4backend.domain.member.repository.MemberRepository;
 import com.project.team4backend.domain.post.entity.Post;
+import com.project.team4backend.domain.post.exception.PostErrorCode;
+import com.project.team4backend.domain.post.exception.PostException;
 import com.project.team4backend.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,19 +35,19 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     public CommentResDTO.CommentCreateResDTO createComment(Long postId, Long parentId, CommentReqDTO.CommentCreateReqDTO dto, String memberEmail) {
         // 멤버 조회
         Member member = memberRepository.findByEmail(memberEmail)
-                .orElseThrow(() -> new CommentException(CommentErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         // Post 객체 가져오기
         Post post;
         if (postId != null) {
             post = postRepository.findById(postId)
-                    .orElseThrow(() -> new CommentException(CommentErrorCode.POST_NOT_FOUND));
+                    .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
         } else if (parentId != null) {
             Comment parentComment = commentRepository.findById(parentId)
                     .orElseThrow(() -> new CommentException(CommentErrorCode.PARENT_COMMENT_NOT_FOUND));
             post = parentComment.getPost();
         } else {
-            throw new CommentException(CommentErrorCode.POST_NOT_FOUND);  // 또는 적절한 예외
+            throw new PostException(PostErrorCode.POST_NOT_FOUND);  // 또는 적절한 예외
         }
 
         Long hierarchy;
@@ -79,7 +81,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
         // 작성자 검증: 이메일로 찾은 Member 객체의 ID와 비교
         Member requestingMember = memberRepository.findByEmail(memberEmail) // 이메일로 Member 찾기
-                .orElseThrow(() -> new CommentException(CommentErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         if (!comment.getMember().getId().equals(requestingMember.getId())) { // 찾은 Member의 ID와 비교
             throw new IllegalArgumentException("자신이 작성한 댓글만 삭제할 수 있습니다.");
@@ -96,7 +98,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
         // 작성자 검증: 이메일로 찾은 Member 객체의 ID와 비교
         Member requestingMember = memberRepository.findByEmail(memberEmail) // 이메일로 Member 찾기
-                .orElseThrow(() -> new CommentException(CommentErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         if (!comment.getMember().getId().equals(requestingMember.getId())) { // 찾은 Member의 ID와 비교
             throw new IllegalArgumentException("자신이 작성한 댓글만 수정할 수 있습니다.");

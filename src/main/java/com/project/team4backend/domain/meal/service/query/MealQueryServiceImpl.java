@@ -8,8 +8,8 @@ import com.project.team4backend.domain.meal.repository.MealCheckRepository;
 import com.project.team4backend.domain.meal.repository.MealRepository;
 import com.project.team4backend.domain.member.entity.Member;
 import com.project.team4backend.domain.member.exception.MemberErrorCode;
+import com.project.team4backend.domain.member.exception.MemberException;
 import com.project.team4backend.domain.member.repository.MemberRepository;
-import com.project.team4backend.global.apiPayload.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +29,7 @@ public class MealQueryServiceImpl implements MealQueryService {
     @Override
     public List<MealResDTO.MealRes> getMealsByDate(LocalDate date, String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         List<Meal> meals = mealRepository.findAllByMemberAndDateOrderByMealIdAsc(member, date);
         return meals.stream()
@@ -40,7 +40,7 @@ public class MealQueryServiceImpl implements MealQueryService {
     @Override
     public boolean isAttendanceChecked(LocalDate date, String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         return mealCheckRepository.findByMemberAndDate(member, date)
                 .map(MealCheck::getIsChecked)
