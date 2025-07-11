@@ -1,7 +1,6 @@
 package com.project.team4backend.domain.post.service.command;
 
 import com.project.team4backend.domain.comment.entity.Comment;
-import com.project.team4backend.domain.comment.entity.CommentLike;
 import com.project.team4backend.domain.comment.repository.CommentLikeRepository;
 import com.project.team4backend.domain.comment.repository.CommentRepository;
 import com.project.team4backend.domain.image.exception.ImageErrorCode;
@@ -16,9 +15,9 @@ import com.project.team4backend.domain.post.converter.PostConverter;
 import com.project.team4backend.domain.post.dto.reponse.PostResDTO;
 import com.project.team4backend.domain.post.dto.request.PostReqDTO;
 import com.project.team4backend.domain.post.entity.Post;
+import com.project.team4backend.domain.post.entity.PostImage;
 import com.project.team4backend.domain.post.entity.PostLike;
 import com.project.team4backend.domain.post.entity.PostScrap;
-import com.project.team4backend.domain.post.entity.PostImage;
 import com.project.team4backend.domain.post.exception.PostErrorCode;
 import com.project.team4backend.domain.post.exception.PostException;
 import com.project.team4backend.domain.post.repository.PostLikeRepository;
@@ -28,8 +27,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -53,7 +52,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     public PostResDTO.PostCreateResDTO createPost(PostReqDTO.PostCreateReqDTO dto, String email) {
         // 멤버 검증
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
         // 이미지 선택 했다면
         if (dto.images() != null && dto.images().size() > 5) {
             throw new ImageException(ImageErrorCode.IMAGE_TOO_MANY_REQUESTS);
@@ -158,7 +157,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     @Override
     public PostResDTO.ToggleResDTO toggleLike(Long postId, String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
 
@@ -181,7 +180,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     @Override
     public PostResDTO.ToggleResDTO toggleScrap(Long postId, String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new PostException(PostErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
 

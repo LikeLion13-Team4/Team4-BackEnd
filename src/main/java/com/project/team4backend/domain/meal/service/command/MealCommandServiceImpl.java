@@ -5,12 +5,13 @@ import com.project.team4backend.domain.meal.dto.request.MealReqDTO;
 import com.project.team4backend.domain.meal.entity.Meal;
 import com.project.team4backend.domain.meal.entity.MealCheck;
 import com.project.team4backend.domain.meal.exception.MealErrorCode;
+import com.project.team4backend.domain.meal.exception.MealException;
 import com.project.team4backend.domain.meal.repository.MealCheckRepository;
 import com.project.team4backend.domain.meal.repository.MealRepository;
 import com.project.team4backend.domain.member.entity.Member;
 import com.project.team4backend.domain.member.exception.MemberErrorCode;
+import com.project.team4backend.domain.member.exception.MemberException;
 import com.project.team4backend.domain.member.repository.MemberRepository;
-import com.project.team4backend.global.apiPayload.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,7 @@ public class MealCommandServiceImpl implements MealCommandService {
     public void createMeal(MealReqDTO.MealReq dto, String email) {
         // email → Member 조회
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         // 식단 저장
         Meal meal = MealConverter.toEntity(dto, member);
@@ -54,10 +55,10 @@ public class MealCommandServiceImpl implements MealCommandService {
     public void updateMeal(Long mealId, MealReqDTO.MealReq req, String email) {
         Member member = getMemberByEmail(email);
         Meal meal = mealRepository.findById(mealId)
-                .orElseThrow(() -> new CustomException(MealErrorCode.MEAL_NOT_FOUND));
+                .orElseThrow(() -> new MealException(MealErrorCode.MEAL_NOT_FOUND));
 
         if (!meal.getMember().equals(member)) {
-            throw new CustomException(MealErrorCode.UNAUTHORIZED_MEAL_ACCESS);
+            throw new MealException(MealErrorCode.UNAUTHORIZED_MEAL_ACCESS);
         }
 
         MealConverter.updateEntity(meal, req);
@@ -68,10 +69,10 @@ public class MealCommandServiceImpl implements MealCommandService {
     public void deleteMeal(Long mealId, String email) {
         Member member = getMemberByEmail(email);
         Meal meal = mealRepository.findById(mealId)
-                .orElseThrow(() -> new CustomException(MealErrorCode.MEAL_NOT_FOUND));
+                .orElseThrow(() -> new MealException(MealErrorCode.MEAL_NOT_FOUND));
 
         if (!meal.getMember().equals(member)) {
-            throw new CustomException(MealErrorCode.UNAUTHORIZED_MEAL_ACCESS);
+            throw new MealException(MealErrorCode.UNAUTHORIZED_MEAL_ACCESS);
         }
 
         mealRepository.delete(meal);
@@ -81,7 +82,7 @@ public class MealCommandServiceImpl implements MealCommandService {
 
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
 

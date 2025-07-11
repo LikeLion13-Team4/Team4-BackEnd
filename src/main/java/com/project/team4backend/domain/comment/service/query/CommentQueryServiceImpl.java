@@ -3,9 +3,9 @@ package com.project.team4backend.domain.comment.service.query;
 import com.project.team4backend.domain.comment.converter.CommentConverter;
 import com.project.team4backend.domain.comment.dto.response.CommentResDTO;
 import com.project.team4backend.domain.comment.entity.Comment;
-import com.project.team4backend.domain.comment.exception.CommentErrorCode;
-import com.project.team4backend.domain.comment.exception.CommentException;
 import com.project.team4backend.domain.comment.repository.CommentRepository;
+import com.project.team4backend.domain.post.exception.PostErrorCode;
+import com.project.team4backend.domain.post.exception.PostException;
 import com.project.team4backend.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class CommentQueryServiceImpl implements CommentQueryService {
     @Override
     public List<CommentResDTO.CommentResponseDTO> getCommentsByPost(Long postId) {
         postRepository.findById(postId)
-                .orElseThrow(() -> new CommentException(CommentErrorCode.POST_NOT_FOUND));
+                .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
 
         List<Comment> comments = commentRepository.findAlignedCommentByPostId(postId);
         return comments.stream()
