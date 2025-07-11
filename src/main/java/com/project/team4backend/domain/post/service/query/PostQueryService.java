@@ -14,15 +14,15 @@ public interface PostQueryService {
     PostResDTO.PostPageResDTO getAllPostsToTag(PostTagType tag, Pageable pageable);
 
     // 스크랩한 목록 조회
-    PostResDTO.PostPageWithoutCountResDTO getScrappedPosts(Pageable pageable, String email);
+    PostResDTO.PostPageResDTO getScrappedPosts(Pageable pageable, String email);
 
     // 좋아요 목록 조회
-    PostResDTO.PostPageWithoutCountResDTO getLikedPosts(String email, Pageable pageable);
+    PostResDTO.PostPageResDTO getLikedPosts(String email, Pageable pageable);
 
     // 댓글 단 게시글 목록 조회
-    PostResDTO.PostPageWithoutCountResDTO getCommentedPosts(String email, Pageable pageable);
+    PostResDTO.PostPageResDTO getCommentedPosts(String email, Pageable pageable);
 
     // 내가 쓴 게시글 목록 조회
-    PostResDTO.PostPageWithoutCountResDTO getMyPosts(String email, Pageable pageable);
+    PostResDTO.PostPageResDTO getMyPosts(String email, Pageable pageable);
 
 }
