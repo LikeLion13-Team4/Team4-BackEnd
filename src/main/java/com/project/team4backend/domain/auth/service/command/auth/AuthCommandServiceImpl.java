@@ -118,10 +118,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
-    public AuthResDTO.JwtResDTO reissueToken(AuthResDTO.JwtResDTO jwtDto) {
+    public AuthResDTO.JwtResDTO reissueToken(AuthReqDTO.JwtReqDTO jwtReqDTO) {
 
         log.info("[ Auth Service ] 토큰 재발급을 시작합니다.");
-        String refreshToken = jwtDto.refreshToken();
+        String refreshToken = jwtReqDTO.refreshToken();
 
         //Access Token 으로부터 사용자 Email 추출
         String email = jwtUtil.getEmail(refreshToken); // **수정부분**

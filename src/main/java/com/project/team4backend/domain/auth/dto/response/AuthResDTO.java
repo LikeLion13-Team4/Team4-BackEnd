@@ -1,5 +1,6 @@
 package com.project.team4backend.domain.auth.dto.response;
 
+import com.project.team4backend.domain.auth.entity.enums.IsTempPassword;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class AuthResDTO {
     public record LoginResDTO(
             String email,
             String accessToken,
-            String refreshToken
+            String refreshToken,
+            IsTempPassword isTemp
     ){}
 }

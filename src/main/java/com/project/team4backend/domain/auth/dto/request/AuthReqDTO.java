@@ -38,4 +38,9 @@ public class AuthReqDTO {
             String authCode
     ){
     }
+
+    @Builder
+    public record JwtReqDTO(
+            String refreshToken
+    ){}
 }
