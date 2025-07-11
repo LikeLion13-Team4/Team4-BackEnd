@@ -53,13 +53,14 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         Long hierarchy;
         Long groups;
         Long orders;
+        Comment parentComment = null;
 
         if (parentId == null) {  // 댓글 작성
             hierarchy = 0L;
             groups = commentRepository.count() + 1;
             orders = 0L;
         } else {  // 대댓글 작성
-            Comment parentComment = commentRepository.findById(parentId)
+            parentComment = commentRepository.findById(parentId)
                     .orElseThrow(() -> new CommentException(CommentErrorCode.PARENT_COMMENT_NOT_FOUND));
             hierarchy = 1L;
             groups = parentComment.getGroups();
@@ -67,7 +68,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
             orders = (maxOrders == null) ? 0L : maxOrders + 1;
         }
 
-        Comment comment = CommentConverter.toComment(dto, post, member, hierarchy, groups, orders);
+        Comment comment = CommentConverter.toComment(dto, post, member, hierarchy, groups, orders, parentComment);
         Comment savedComment = commentRepository.save(comment);
 
         return CommentConverter.toCommentCreateResDTO(savedComment);
