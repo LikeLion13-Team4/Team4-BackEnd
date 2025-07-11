@@ -36,6 +36,7 @@ public class CorsConfig implements WebMvcConfigurer {
         allowedOriginPatterns.add("http://127.0.0.1:5503");
         allowedOriginPatterns.add("http://127.0.0.1:5504");
         allowedOriginPatterns.add("http://127.0.0.1:5505");
+        allowedOriginPatterns.add("https://tea-theta-self.vercel.app/");
 
 
         //허용하는 HTTP METHOD 지정
