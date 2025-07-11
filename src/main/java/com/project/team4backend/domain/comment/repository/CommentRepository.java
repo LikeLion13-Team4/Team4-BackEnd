@@ -18,6 +18,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("select c from Comment c where c.post.postId = :id order by c.groups, c.orders") //해당 게시글에 달린 댓글만 조회
     List<Comment> findAlignedCommentByPostId(@Param("id") Long postId);
 
+    @EntityGraph(attributePaths = {"post","member"})
+    @Query("select c from Comment c where c.parentComment.commentId = :id order by c.orders")
+    List<Comment> findRepliesByParentCommentId(@Param("id") Long parentId);
+
     //새로운 대댓글이 들어올 때, 기존 대댓글들 중에서 제일 뒤에 붙이기 위해 가장 큰 orders 값을 찾음
     @Query("select max(c.orders) from Comment c where c.post.postId = :id and c.groups = :groups")
     Long findMaxCommentOrder(@Param("id") Long postId, @Param("groups") Long groups);

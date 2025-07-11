@@ -7,4 +7,6 @@ import java.util.List;
 public interface CommentQueryService {
 
     List<CommentResDTO.CommentResponseDTO> getCommentsByPost(Long postId);
+
+    List<CommentResDTO.CommentResponseDTO> getCommentsByComment(Long commentId);
 }
