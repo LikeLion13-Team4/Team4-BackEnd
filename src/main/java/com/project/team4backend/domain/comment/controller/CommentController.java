@@ -58,6 +58,13 @@ public class CommentController {
 
         return CustomResponse.onSuccess(commentQueryService.getCommentsByPost(postId));
     }
+    @GetMapping("/posts/comments/{commentId}")
+    @Operation(summary = "대댓글 목록 조회", description = "특정 게시글의 특정 댓글의 모든 대댓글을 조회합니다.")
+    public CustomResponse<List<CommentResDTO.CommentResponseDTO>> getCommentsByComment(
+            @PathVariable Long commentId) {
+
+        return CustomResponse.onSuccess(commentQueryService.getCommentsByComment(commentId));
+    }
 
     // 댓글 수정
     @PutMapping("/comments/{commentId}")

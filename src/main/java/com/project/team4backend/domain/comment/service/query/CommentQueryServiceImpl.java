@@ -3,6 +3,8 @@ package com.project.team4backend.domain.comment.service.query;
 import com.project.team4backend.domain.comment.converter.CommentConverter;
 import com.project.team4backend.domain.comment.dto.response.CommentResDTO;
 import com.project.team4backend.domain.comment.entity.Comment;
+import com.project.team4backend.domain.comment.exception.CommentErrorCode;
+import com.project.team4backend.domain.comment.exception.CommentException;
 import com.project.team4backend.domain.comment.repository.CommentRepository;
 import com.project.team4backend.domain.post.exception.PostErrorCode;
 import com.project.team4backend.domain.post.exception.PostException;
@@ -28,6 +30,17 @@ public class CommentQueryServiceImpl implements CommentQueryService {
                 .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
 
         List<Comment> comments = commentRepository.findAlignedCommentByPostId(postId);
+        return comments.stream()
+                .map(CommentConverter::toCommentResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CommentResDTO.CommentResponseDTO> getCommentsByComment(Long parentId) {
+        commentRepository.findById(parentId)
+                .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));
+
+        List<Comment> comments = commentRepository.findRepliesByParentCommentId(parentId);
         return comments.stream()
                 .map(CommentConverter::toCommentResponseDTO)
                 .collect(Collectors.toList());
