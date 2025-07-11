@@ -75,43 +75,43 @@ public class PostQueryServiceImpl implements PostQueryService {
     }
 
     @Override
-    public PostResDTO.PostPageWithoutCountResDTO getScrappedPosts(Pageable pageable, String email) {
+    public PostResDTO.PostPageResDTO getScrappedPosts(Pageable pageable, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = postScrapRepository.findByMember(member, pageable)
                 .map(PostScrap::getPost);
 
-        return toPostPageWithoutCounts(postPage);
+        return toPostPageWithCounts(postPage);
     }
 
     @Override
-    public PostResDTO.PostPageWithoutCountResDTO getLikedPosts(String email, Pageable pageable) {
+    public PostResDTO.PostPageResDTO getLikedPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = postLikeRepository.findByMember(member, pageable)
                 .map(PostLike::getPost);
 
-        return toPostPageWithoutCounts(postPage);
+        return toPostPageWithCounts(postPage);
     }
 
     @Override
-    public PostResDTO.PostPageWithoutCountResDTO getCommentedPosts(String email, Pageable pageable) {
+    public PostResDTO.PostPageResDTO getCommentedPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = commentRepository.findDistinctPostsByMember(member, pageable);
-        return toPostPageWithoutCounts(postPage);
+        return toPostPageWithCounts(postPage);
     }
 
     @Override
-    public PostResDTO.PostPageWithoutCountResDTO getMyPosts(String email, Pageable pageable) {
+    public PostResDTO.PostPageResDTO getMyPosts(String email, Pageable pageable) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Page<Post> postPage = postRepository.findAllByMember(member, pageable);
-        return toPostPageWithoutCounts(postPage);
+        return toPostPageWithCounts(postPage);
     }
 
     private PostResDTO.PostPageResDTO toPostPageWithCounts(Page<Post> postPage) {

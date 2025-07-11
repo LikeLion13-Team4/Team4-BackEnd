@@ -99,7 +99,7 @@ public class PostController {
 
     @GetMapping("/scraps")
     @Operation(summary = "내가 스크랩한 게시글 조회 (페이지네이션)", description = "로그인한 사용자가 스크랩한 게시글을 페이지네이션으로 조회합니다.")
-    public CustomResponse<PostResDTO.PostPageWithoutCountResDTO> getMyScrapPosts(
+    public CustomResponse<PostResDTO.PostPageResDTO> getMyScrapPosts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @AuthenticationPrincipal UserDetails userDetails
@@ -111,7 +111,7 @@ public class PostController {
 
     @GetMapping("/liked")
     @Operation(summary = "좋아요한 게시글 목록 조회", description = "로그인한 사용자가 좋아요한 게시글을 페이지네이션으로 조회합니다.")
-    public CustomResponse<PostResDTO.PostPageWithoutCountResDTO> getLikedPosts(
+    public CustomResponse<PostResDTO.PostPageResDTO> getLikedPosts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
@@ -123,7 +123,7 @@ public class PostController {
 
     @GetMapping("/my-comments")
     @Operation(summary = "댓글 단 게시글 목록 조회", description = "사용자가 댓글 단 게시글을 페이지네이션으로 조회합니다.")
-    public CustomResponse<PostResDTO.PostPageWithoutCountResDTO> getCommentedPosts(
+    public CustomResponse<PostResDTO.PostPageResDTO> getCommentedPosts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
@@ -135,7 +135,7 @@ public class PostController {
 
     @GetMapping("/my")
     @Operation(summary = "내가 작성한 게시글 조회", description = "자신이 작성한 게시글을 페이지네이션으로 조회합니다.")
-    public CustomResponse<PostResDTO.PostPageWithoutCountResDTO> getMyPosts(
+    public CustomResponse<PostResDTO.PostPageResDTO> getMyPosts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
