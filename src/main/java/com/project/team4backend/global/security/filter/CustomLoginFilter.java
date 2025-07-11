@@ -89,6 +89,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
                 .email(customUserDetails.getEmail())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .isTemp(customUserDetails.getIsTempPassword())
                 .build();
 
         CustomResponse<AuthResDTO.LoginResDTO> responseBody = CustomResponse.onSuccess(jwtLoginResDTO);

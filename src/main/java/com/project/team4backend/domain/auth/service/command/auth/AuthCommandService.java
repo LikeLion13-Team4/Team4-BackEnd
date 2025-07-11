@@ -16,5 +16,5 @@ public interface AuthCommandService {
     void updateTempPassword(AuthReqDTO.TempPasswordReqDTO tempPasswordReqDTO, EmailVerification emailVerification);
 
     //토큰 재발급
-    AuthResDTO.JwtResDTO reissueToken(AuthResDTO.JwtResDTO jwtDto);
+    AuthResDTO.JwtResDTO reissueToken(AuthReqDTO.JwtReqDTO jwtReqDTO);
 }
