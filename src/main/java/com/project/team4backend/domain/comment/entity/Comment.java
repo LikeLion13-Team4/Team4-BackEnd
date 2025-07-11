@@ -49,6 +49,10 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parentComment;
+
     // Comment 내용 업데이트 메서드
     public void updateComment(String newComment) {
         if (newComment == null || newComment.trim().isEmpty()) {

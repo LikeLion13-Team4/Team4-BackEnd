@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class CommentConverter {
 
     //댓글 생성 ReqDTO를 엔티티로 변환
-    public static Comment toComment(CommentReqDTO.CommentCreateReqDTO dto, Post post, Member member, Long hierarchy, Long groups, Long orders) {
+    public static Comment toComment(CommentReqDTO.CommentCreateReqDTO dto, Post post, Member member, Long hierarchy, Long groups, Long orders, Comment parentComment) {
         return Comment.builder()
                 .comment(dto.comment())
                 .hierarchy(hierarchy)
@@ -20,6 +20,7 @@ public class CommentConverter {
                 .orders(orders)
                 .post(post)
                 .member(member)
+                .parentComment(parentComment)
                 .build();
     }// likes는 @Builder.Default로 0L, createdAt, updatedAt은 BaseEntity에서 자동설정
 
